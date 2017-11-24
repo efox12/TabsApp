@@ -56,10 +56,6 @@ public class CreateGroupActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            //Intent intent = getIntent();
-            //Group group = (Group) data.getSerializableExtra("group");
-            //intent.putExtra("group", group);
-            //intent.putExtra("group", data.getStringExtra("group"));
             this.setResult(Activity.RESULT_OK, data);
             this.finish();
         }

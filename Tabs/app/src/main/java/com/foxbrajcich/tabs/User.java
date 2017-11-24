@@ -14,4 +14,5 @@ public class User {
     private int amountOwed;
     private List<User> friends;
     private List<Expense> expenses;
+    private boolean isOnline;
 }

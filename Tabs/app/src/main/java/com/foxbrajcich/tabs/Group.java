@@ -1,6 +1,7 @@
 package com.foxbrajcich.tabs;
 
 import java.io.Serializable;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -8,10 +9,11 @@ import java.util.List;
  */
 
 public class Group implements Serializable{
-    private Tab currentTab;
     private String groupTitle;
+    private int groupId;
     private List<User> members;
-    private boolean isActive;
+    private Hashtable<Integer, List<Expense>> transactionsTable;
+    private boolean isOnline;
 
     public void setGroupTitle(String groupTitle) {
         this.groupTitle = groupTitle;

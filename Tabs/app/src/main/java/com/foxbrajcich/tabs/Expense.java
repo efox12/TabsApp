@@ -5,6 +5,8 @@ package com.foxbrajcich.tabs;
  */
 
 public class Expense {
+    private String name;
+    private int expenseId;
     private double amount;
     private boolean completed;
     private int userId;

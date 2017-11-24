@@ -50,10 +50,6 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            //Intent intent = getIntent();
-            //Group newGroup = (Group) data.getSerializableExtra("group");
-            //String title = data.getStringExtra("group");
-            //data.putExtra("group",title);
             this.setResult(Activity.RESULT_OK, data);
             this.finish();
         }

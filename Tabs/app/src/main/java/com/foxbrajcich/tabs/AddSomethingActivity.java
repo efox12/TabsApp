@@ -58,11 +58,6 @@ public class AddSomethingActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            //Intent intent = new Intent();
-            //Group group = (Group) data.getSerializableExtra("group");
-            //intent.putExtra("group", group);
-            //intent.putExtra("group", data.getStringExtra("group"));
-            //String string = data.getStringExtra("group");
             this.setResult(Activity.RESULT_OK, data);
             AddSomethingActivity.this.finish();
         }
