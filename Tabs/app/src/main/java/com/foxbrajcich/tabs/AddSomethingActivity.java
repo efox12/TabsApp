@@ -1,5 +1,6 @@
 package com.foxbrajcich.tabs;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -17,7 +18,7 @@ import android.view.Window;
 import android.widget.Button;
 
 public class AddSomethingActivity extends AppCompatActivity {
-    final int RESULT_CODE = 1;
+    final int REQUEST_CODE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
@@ -30,19 +31,12 @@ public class AddSomethingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AddSomethingActivity.this, CreateGroupActivity.class);
-                startActivityForResult(intent, RESULT_CODE);
+                startActivityForResult(intent, REQUEST_CODE);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
             }
         };
         button.setOnClickListener(listener);
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Intent intent = new Intent();
-        intent.putExtra("group", data.getSerializableExtra("group"));
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -55,8 +49,22 @@ public class AddSomethingActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Intent intent = new Intent();
+            //Group group = (Group) data.getSerializableExtra("group");
+            //intent.putExtra("group", group);
+            intent.putExtra("group", data.getStringExtra("group"));
+            this.setResult(Activity.RESULT_OK, intent);
+            AddSomethingActivity.this.finish();
+        }
     }
+
+
+    @Override
+    public void onBackPressed() {
+        overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
+        super.onBackPressed();
+    }
+
 }

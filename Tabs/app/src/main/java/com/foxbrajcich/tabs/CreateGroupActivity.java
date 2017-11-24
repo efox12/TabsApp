@@ -1,5 +1,6 @@
 package com.foxbrajcich.tabs;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +34,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         EditText title = (EditText) findViewById(R.id.titleEditText);
         //noinspection SimplifiableIfStatement
         if (id == R.id.nextViewButton) {
-            Intent intent = new Intent(CreateGroupActivity.this, AddFriendsToGroupActivity.class);
+            Intent intent = new Intent(this, AddFriendsToGroupActivity.class);
             intent.putExtra("title", title.getText().toString());
             startActivityForResult(intent, REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
@@ -41,7 +42,11 @@ public class CreateGroupActivity extends AppCompatActivity {
         }
 
         if(item.getItemId() == android.R.id.home){
-            finishAfterTransition();
+            Intent intent = new Intent();
+            System.out.println("EHEHEHEHEHEHEHEHEHEHEHEHEHEHEHE");
+            this.setResult(Activity.RESULT_OK, intent);
+            this.finish();
+            //this.finishAfterTransition();
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }
 
@@ -49,15 +54,23 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Intent intent = getIntent();
+            //Group group = (Group) data.getSerializableExtra("group");
+            //intent.putExtra("group", group);
+            intent.putExtra("group", data.getStringExtra("group"));
+            this.setResult(Activity.RESULT_OK, intent);
+            this.finish();
+        }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Intent intent = new Intent();
-        intent.putExtra("group", data.getSerializableExtra("group"));
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onBackPressed() {
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        super.onBackPressed();
     }
+
 }
+
