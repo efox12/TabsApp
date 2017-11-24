@@ -128,15 +128,22 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.profile) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivityForResult(intent, NEW_REQUEST_CODE);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out);
+        } else if (id == R.id.findFriends) {
+            Intent intent = new Intent(MainActivity.this, FindFriendsActivity.class);
+            startActivityForResult(intent, NEW_REQUEST_CODE);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out);
+        } else if (id == R.id.settings) {
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivityForResult(intent, NEW_REQUEST_CODE);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out);
+        } else if (id == R.id.help) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.signOut) {
 
         }
 

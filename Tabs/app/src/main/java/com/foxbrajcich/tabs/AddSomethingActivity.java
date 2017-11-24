@@ -49,6 +49,12 @@ public class AddSomethingActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -61,12 +67,4 @@ public class AddSomethingActivity extends AppCompatActivity {
             AddSomethingActivity.this.finish();
         }
     }
-
-
-    @Override
-    public void onBackPressed() {
-        overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
-        super.onBackPressed();
-    }
-
 }

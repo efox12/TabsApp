@@ -29,10 +29,10 @@
         </activity>
         <activity
             android:name=".FriendsActivity"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".TransactionsActivity"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".AddSomethingActivity"
             android:parentActivityName=".MainActivity" />
@@ -41,9 +41,21 @@
             android:parentActivityName=".AddSomethingActivity" />
         <activity
             android:name=".AddFriendsToGroupActivity"
-            android:parentActivityName=".CreateGroupActivity">
-        </activity>
-        <activity android:name=".GroupActivity"
+            android:parentActivityName=".CreateGroupActivity" />
+        <activity
+            android:name=".GroupActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:label="@string/profile"
+            android:name=".ProfileActivity"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:label="@string/settings"
+            android:name=".SettingsActivity"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:label="@string/findFriends"
+            android:name=".FindFriendsActivity"
             android:parentActivityName=".MainActivity">
         </activity>
     </application>
