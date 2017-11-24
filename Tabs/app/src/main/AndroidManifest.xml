@@ -29,12 +29,10 @@
         </activity>
         <activity
             android:name=".FriendsActivity"
-            android:label="@string/title_activity_friends"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".TransactionsActivity"
-            android:label="@string/title_activity_transactions"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".AddSomethingActivity"
             android:parentActivityName=".MainActivity" />

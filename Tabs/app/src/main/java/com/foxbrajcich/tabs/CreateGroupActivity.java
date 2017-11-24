@@ -43,7 +43,6 @@ public class CreateGroupActivity extends AppCompatActivity {
 
         if(item.getItemId() == android.R.id.home){
             Intent intent = new Intent();
-            System.out.println("EHEHEHEHEHEHEHEHEHEHEHEHEHEHEHE");
             this.setResult(Activity.RESULT_OK, intent);
             this.finish();
             //this.finishAfterTransition();
@@ -57,11 +56,11 @@ public class CreateGroupActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Intent intent = getIntent();
+            //Intent intent = getIntent();
             //Group group = (Group) data.getSerializableExtra("group");
             //intent.putExtra("group", group);
-            intent.putExtra("group", data.getStringExtra("group"));
-            this.setResult(Activity.RESULT_OK, intent);
+            //intent.putExtra("group", data.getStringExtra("group"));
+            this.setResult(Activity.RESULT_OK, data);
             this.finish();
         }
     }

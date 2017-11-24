@@ -48,13 +48,13 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE) {
-            Intent intent = getIntent();
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            //Intent intent = getIntent();
             //Group newGroup = (Group) data.getSerializableExtra("group");
-            String title = intent.getStringExtra("group");
-            intent.putExtra("group",title);
-            this.setResult(Activity.RESULT_OK, intent);
+            //String title = data.getStringExtra("group");
+            //data.putExtra("group",title);
+            this.setResult(Activity.RESULT_OK, data);
             this.finish();
         }
     }

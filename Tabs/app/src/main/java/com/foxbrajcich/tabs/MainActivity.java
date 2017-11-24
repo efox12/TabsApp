@@ -1,17 +1,12 @@
 package com.foxbrajcich.tabs;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -22,10 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +29,9 @@ public class MainActivity extends AppCompatActivity
     List<String> friendList = new ArrayList<>();
     List<String> transactionList = new ArrayList<>();
 
-    String friendsTag;
-    String groupsTag;
-    String transactionsTag;
-
     final static int REQUEST_CODE = 1;
+    final static int NEW_REQUEST_CODE = 2;
+    final static int EXISTING_GROUP_REQUEST_CODE = 3;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -86,7 +75,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddSomethingActivity.class);
-                startActivityForResult(intent, REQUEST_CODE);
+                startActivityForResult(intent, NEW_REQUEST_CODE);
                 overridePendingTransition(R.anim.slide_up_bottom, R.anim.fade_out);
             }
         });
@@ -186,36 +175,50 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFriendSelected(int position) {
         Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
+        intent.putExtra("name", friendList.get(position).toString());
         startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override
     public void onGroupSelected(int position) {
         Intent intent = new Intent(MainActivity.this, GroupActivity.class);
-        intent.putExtra("title", groupList.get(position).toString());
-        startActivityForResult(intent, REQUEST_CODE);
+        intent.putExtra("title", groupList.get(position));
+        intent.putExtra("position", position);
+        startActivityForResult(intent, EXISTING_GROUP_REQUEST_CODE);
     }
 
     @Override
     public void onTransactionSelected(int position) {
         Intent intent = new Intent(MainActivity.this, TransactionsActivity.class);
+        intent.putExtra("name", transactionList.get(position));
         startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE) {
-            //Group group = (Group) data.getSerializableExtra("group");
-            //groupList.add(group.getGroupTitle().toString());
-            //if (data.hasExtra("group")) {
-                groupList.add("I get a null reference when I try to add actual title");
+        if (requestCode == NEW_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if(data.hasExtra("group")) {
+                Group group = (Group) data.getSerializableExtra("group");
+                groupList.add(group.getGroupTitle());
                 updateFragment(1);
-            //}
+            }
+        }
+        if (requestCode == EXISTING_GROUP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if(data.hasExtra("group")) {
+                Group group = (Group) data.getSerializableExtra("group");
+                if(data.hasExtra("position")){
+                    int position = data.getIntExtra("position", 0);
+                    if(groupList.get(position).compareTo(group.getGroupTitle()) != 0) {
+                        groupList.set(position, group.getGroupTitle());
+                        updateFragment(1);
+                    }
+                }
+
+            }
         }
     }
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -253,6 +256,5 @@ public class MainActivity extends AppCompatActivity
             }
             return null;
         }
-
     }
 }

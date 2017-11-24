@@ -19,43 +19,33 @@ public class GroupActivity extends AppCompatActivity {
         actionBar.setTitle(getIntent().getStringExtra("title"));
         if(getIntent().hasExtra("group")) {
             group = (Group) getIntent().getSerializableExtra("group");
-            group.setGroupTitle(getIntent().getStringExtra("title"));
         }
+        group.setGroupTitle(getIntent().getStringExtra("title"));
         actionBar.setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
 
-        Button button = (Button) findViewById(R.id.button2);
-
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                GroupActivity.this.finishAfterTransition();
-                Intent intent = getIntent();
-                String title = group.getGroupTitle();
-                intent.putExtra("group", title);
-                GroupActivity.this.setResult(Activity.RESULT_OK, intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.scale_down);
-
-            }
-        };
-        button.setOnClickListener(listener);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home){
-            GroupActivity.this.finishAfterTransition();
             Intent intent = getIntent();
-            intent.putExtra("group", group.getGroupTitle());
-            this.setResult(Activity.RESULT_OK, intent);
+            intent.putExtra("group", group);
+            this.setResult(RESULT_OK, intent);
+            GroupActivity.this.finishAfterTransition();
             overridePendingTransition(R.anim.fade_in, R.anim.scale_down);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
+        Intent intent = getIntent();
+        intent.putExtra("group", group);
+        this.setResult(RESULT_OK, intent);
+        GroupActivity.this.finishAfterTransition();
         overridePendingTransition(R.anim.fade_in, R.anim.scale_down);
-        super.onBackPressed();
+        //super.onBackPressed();
     }
 
 }
