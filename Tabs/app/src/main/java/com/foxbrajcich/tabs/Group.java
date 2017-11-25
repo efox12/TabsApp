@@ -1,6 +1,7 @@
 package com.foxbrajcich.tabs;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -12,7 +13,8 @@ public class Group implements Serializable{
     private String groupTitle;
     private int groupId;
     private List<User> members;
-    private Hashtable<Integer, List<Expense>> transactionsTable;
+    List<Expense> expenses = new ArrayList<>();
+    private Hashtable<Integer, List<Expense>> expenseTable;
     private boolean isOnline;
 
     public void setGroupTitle(String groupTitle) {
@@ -21,5 +23,13 @@ public class Group implements Serializable{
 
     public String getGroupTitle() {
         return groupTitle;
+    }
+
+    public void setExpenses(List<Expense> expenses) {
+        this.expenses = expenses;
+    }
+
+    public List<Expense> getExpenses() {
+        return expenses;
     }
 }

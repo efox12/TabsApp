@@ -25,9 +25,14 @@ import java.util.List;
  */
 public class MainActivityFragment extends ListFragment{
     int fragmentNumber;
-    ArrayAdapter<String> friendsAdapter;
-    ArrayAdapter<String> groupsAdapter;
-    ArrayAdapter<String> transactionsAdapter;
+    List<User> friends = new ArrayList<>();
+    List<Group> groups = new ArrayList<>();
+    List<Transaction> transactions = new ArrayList<>();
+
+    ArrayAdapter<User> friendsAdapter;
+    ArrayAdapter<Group> groupsAdapter;
+    ArrayAdapter<Transaction> transactionsAdapter;
+
     OnSectionSelected onSectionSelected;
     OnGetList onGetList;
 
@@ -39,9 +44,9 @@ public class MainActivityFragment extends ListFragment{
     }
 
     public interface OnGetList{
-        public List<String> getGroupList();
-        public List<String> getFriendList();
-        public List<String> getTransactionList();
+        public List<Group> getGroupList();
+        public List<User> getFriendList();
+        public List<Transaction> getTransactionList();
     }
 
     @Override
@@ -64,7 +69,7 @@ public class MainActivityFragment extends ListFragment{
     }
 
     public void updateFriends(){
-        groups = onGetList.getGroupList();
+        friends = onGetList.getFriendList();
         friendsAdapter.notifyDataSetChanged();
     }
     public void updateGroups(){
@@ -72,7 +77,7 @@ public class MainActivityFragment extends ListFragment{
         groupsAdapter.notifyDataSetChanged();
     }
     public void updateTransactions(){
-        groups = onGetList.getGroupList();
+        transactions = onGetList.getTransactionList();
         transactionsAdapter.notifyDataSetChanged();
     }
 
@@ -96,9 +101,6 @@ public class MainActivityFragment extends ListFragment{
         fragment.setArguments(args);
         return fragment;
     }
-    List<String> friends = new ArrayList<>();
-    List<String> groups = new ArrayList<>();
-    List<String> transactions = new ArrayList<>();
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
@@ -118,7 +120,7 @@ public class MainActivityFragment extends ListFragment{
         ListView listView = (ListView) rootView.findViewById(android.R.id.list);
         if(getArguments().getInt(ARG_SECTION_NUMBER) == 1){
             friends = onGetList.getFriendList();
-            friendsAdapter = new ArrayAdapter<String>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, friends){
+            friendsAdapter = new ArrayAdapter<User>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, friends){
                 @NonNull
                 @Override
                 public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -126,8 +128,8 @@ public class MainActivityFragment extends ListFragment{
 
                     TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
                     TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
-                    textView1.setText(friends.get(position) + " " + getArguments().getInt(ARG_SECTION_NUMBER));
-                    textView2.setText(friends.get(position));
+                    textView1.setText(friends.get(position).getName());
+                    textView2.setText("Friend " + position);
                     return view;
                 }
             };
@@ -137,7 +139,7 @@ public class MainActivityFragment extends ListFragment{
 
         if(getArguments().getInt(ARG_SECTION_NUMBER) == 2){
             groups = onGetList.getGroupList();
-            groupsAdapter = new ArrayAdapter<String>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, groups){
+            groupsAdapter = new ArrayAdapter<Group>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, groups){
                 @NonNull
                 @Override
                 public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -145,8 +147,8 @@ public class MainActivityFragment extends ListFragment{
 
                     TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
                     TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
-                    textView1.setText(groups.get(position) + " " + getArguments().getInt(ARG_SECTION_NUMBER));
-                    textView2.setText(groups.get(position));
+                    textView1.setText(groups.get(position).getGroupTitle());
+                    textView2.setText("Group " + position);
                     return view;
                 }
             };
@@ -156,7 +158,7 @@ public class MainActivityFragment extends ListFragment{
 
         if(getArguments().getInt(ARG_SECTION_NUMBER) == 3){
             transactions = onGetList.getTransactionList();
-            transactionsAdapter = new ArrayAdapter<String>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, transactions){
+            transactionsAdapter = new ArrayAdapter<Transaction>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, transactions){
                 @NonNull
                 @Override
                 public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -164,8 +166,8 @@ public class MainActivityFragment extends ListFragment{
 
                     TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
                     TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
-                    textView1.setText(transactions.get(position) + " " + getArguments().getInt(ARG_SECTION_NUMBER));
-                    textView2.setText(transactions.get(position));
+                    textView1.setText(transactions.get(position).getName());
+                    textView2.setText("Transaction " + position);
                     return view;
                 }
             };

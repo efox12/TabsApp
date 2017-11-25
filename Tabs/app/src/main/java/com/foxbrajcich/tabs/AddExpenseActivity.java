@@ -24,26 +24,36 @@ public class AddExpenseActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.addExpense) {
-            Intent intent = getIntent();
-            Expense expense = new Expense();
             EditText expenseAmount = (EditText) findViewById(R.id.expenseAmount);
             EditText expenseDescription = (EditText) findViewById(R.id.expenseDiscription);
-            expense.setAmount(Double.valueOf(expenseAmount.getText().toString()));
-            expense.setContent(expenseDescription.getText().toString());
-            intent.putExtra("expense", expense);
-            setResult(RESULT_OK, intent);
-            finishAfterTransition();
-            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
-            return true;
+            if(expenseAmount.getText().length() > 0) {
+                Intent intent = getIntent();
+                Expense expense = new Expense();
+                expense.setAmount(Double.valueOf(expenseAmount.getText().toString()));
+                expense.setContent(expenseDescription.getText().toString());
+                intent.putExtra("expense", expense);
+                setResult(RESULT_OK, intent);
+                finishAfterTransition();
+                overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
+                return true;
+            }
         }
         if(item.getItemId() == android.R.id.home){
             Intent intent = getIntent();
             this.setResult(RESULT_OK, intent);
             finishAfterTransition();
-            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
+            overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = getIntent();
+        this.setResult(RESULT_OK, intent);
+        finishAfterTransition();
+        overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
     }
 
 }

@@ -36,7 +36,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         if (id == R.id.nextViewButton) {
             Intent intent = new Intent(this, GroupActivity.class);
             Group group = new Group();
-            intent.putExtra("title", getIntent().getStringExtra("title"));
+            group.setGroupTitle(getIntent().getStringExtra("title"));
             intent.putExtra("group", group);
             startActivityForResult(intent, REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);

@@ -25,9 +25,9 @@ public class MainActivity extends AppCompatActivity
         MainActivityFragment.OnSectionSelected,
         MainActivityFragment.OnGetList {
 
-    List<String> groupList = new ArrayList<>();
-    List<String> friendList = new ArrayList<>();
-    List<String> transactionList = new ArrayList<>();
+    List<Group> groupList = new ArrayList<>();
+    List<User> friendList = new ArrayList<>();
+    List<Transaction> transactionList = new ArrayList<>();
 
     final static int REQUEST_CODE = 1;
     final static int NEW_REQUEST_CODE = 2;
@@ -54,10 +54,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        friendList.add("test");
-        groupList.add("one");
-        transactionList.add("two");
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -165,31 +161,31 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public List<String> getGroupList(){
+    public List<Group> getGroupList(){
         return groupList;
     }
 
     @Override
-    public List<String> getFriendList(){
+    public List<User> getFriendList(){
         return friendList;
     }
 
     @Override
-    public List<String> getTransactionList(){
+    public List<Transaction> getTransactionList(){
         return transactionList;
     }
 
     @Override
     public void onFriendSelected(int position) {
         Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
-        intent.putExtra("name", friendList.get(position).toString());
+        intent.putExtra("friend", friendList.get(position).toString());
         startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override
     public void onGroupSelected(int position) {
         Intent intent = new Intent(MainActivity.this, GroupActivity.class);
-        intent.putExtra("title", groupList.get(position));
+        intent.putExtra("group", groupList.get(position));
         intent.putExtra("position", position);
         startActivityForResult(intent, EXISTING_GROUP_REQUEST_CODE);
     }
@@ -197,7 +193,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onTransactionSelected(int position) {
         Intent intent = new Intent(MainActivity.this, TransactionsActivity.class);
-        intent.putExtra("name", transactionList.get(position));
+        intent.putExtra("transaction", transactionList.get(position));
         startActivityForResult(intent, REQUEST_CODE);
     }
 
@@ -207,7 +203,7 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == NEW_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if(data.hasExtra("group")) {
                 Group group = (Group) data.getSerializableExtra("group");
-                groupList.add(group.getGroupTitle());
+                groupList.add(group);
                 updateFragment(1);
             }
         }
@@ -216,12 +212,9 @@ public class MainActivity extends AppCompatActivity
                 Group group = (Group) data.getSerializableExtra("group");
                 if(data.hasExtra("position")){
                     int position = data.getIntExtra("position", 0);
-                    if(groupList.get(position).compareTo(group.getGroupTitle()) != 0) {
-                        groupList.set(position, group.getGroupTitle());
-                        updateFragment(1);
-                    }
+                    groupList.set(position, group);
+                    updateFragment(1);
                 }
-
             }
         }
     }

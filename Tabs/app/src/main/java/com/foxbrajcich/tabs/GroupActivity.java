@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class GroupActivity extends AppCompatActivity {
     final static int REQUEST_CODE = 1;
-    Group group = new Group();
+    Group group;
     List<Expense> expenses = new ArrayList<>();
     ArrayAdapter<Expense> adapter;
     @Override
@@ -29,11 +30,26 @@ public class GroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(getIntent().getStringExtra("title"));
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GroupActivity.this, AddExpenseActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
+                overridePendingTransition(R.anim.slide_up_bottom, R.anim.fade_out);
+            }
+        });
+
         if(getIntent().hasExtra("group")) {
             group = (Group) getIntent().getSerializableExtra("group");
+            actionBar.setTitle(group.getGroupTitle());
+            expenses = group.getExpenses();
+            //System.out.println("OIOIOIOIOIOIOIOIOIO"+expenses.get(0).getAmount());
+            //if(group.getExpenses().size() > 0)
+                //adapter.notifyDataSetChanged();
         }
-        group.setGroupTitle(getIntent().getStringExtra("title"));
+
+        //group.setGroupTitle(getIntent().getStringExtra("title"));
         actionBar.setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
         ListView listView = (ListView) findViewById(R.id.expenseList);
         adapter = new ArrayAdapter<Expense>(this, android.R.layout.simple_list_item_2, android.R.id.text1, expenses){
@@ -50,22 +66,22 @@ public class GroupActivity extends AppCompatActivity {
             }
         };
         listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.group_menu, menu);
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.addExpense) {
-            Intent intent = new Intent(this, AddExpenseActivity.class);
-            startActivityForResult(intent, REQUEST_CODE);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
-            return true;
-        }
+        //if (item.getItemId() == R.id.addExpense) {
+        //
+        //  return true;
+        //}
         if(item.getItemId() == android.R.id.home){
             Intent intent = getIntent();
             intent.putExtra("group", group);
@@ -93,7 +109,9 @@ public class GroupActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if(data.hasExtra("expense")){
                 expenses.add((Expense) data.getSerializableExtra("expense"));
-                //adapter.notifyDataSetChanged();
+                group.setExpenses(expenses);
+                System.out.println(group.getExpenses().get(0).getAmount());
+                adapter.notifyDataSetChanged();
             }
         }
     }
