@@ -44,19 +44,24 @@
             android:parentActivityName=".CreateGroupActivity" />
         <activity
             android:name=".GroupActivity"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/profile"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:label="@string/profile"
-            android:name=".ProfileActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity
-            android:label="@string/settings"
             android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity"/>
+            android:label="@string/settings"
+            android:parentActivityName=".MainActivity" />
         <activity
-            android:label="@string/findFriends"
             android:name=".FindFriendsActivity"
+            android:label="@string/findFriends"
             android:parentActivityName=".MainActivity">
+
+        </activity>
+        <activity android:name=".AddExpenseActivity"
+            android:parentActivityName=".GroupActivity">
         </activity>
     </application>
 
