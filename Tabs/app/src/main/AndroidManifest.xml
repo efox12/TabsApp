@@ -58,9 +58,12 @@
             android:name=".FindFriendsActivity"
             android:label="@string/findFriends"
             android:parentActivityName=".MainActivity">
-
         </activity>
-        <activity android:name=".AddExpenseActivity"
+        <activity
+            android:name=".AddExpenseActivity"
+            android:parentActivityName=".GroupActivity">
+        </activity>
+        <activity android:name=".GroupInfoActivity"
             android:parentActivityName=".GroupActivity">
         </activity>
     </application>
