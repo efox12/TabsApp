@@ -44,7 +44,6 @@ public class GroupActivity extends AppCompatActivity {
             group = (Group) getIntent().getSerializableExtra("group");
             actionBar.setTitle(group.getGroupTitle());
             expenses = group.getExpenses();
-
         }
 
         actionBar.setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);

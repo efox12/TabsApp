@@ -25,6 +25,22 @@ public class Group implements Serializable{
         return groupTitle;
     }
 
+    public void setMembers(List<User> members) {
+        this.members = members;
+    }
+
+    public List<User> getMembers() {
+        return members;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
     public void setExpenses(List<Expense> expenses) {
         this.expenses = expenses;
     }

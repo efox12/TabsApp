@@ -34,8 +34,15 @@ public class CreateGroupActivity extends AppCompatActivity {
         EditText title = (EditText) findViewById(R.id.titleEditText);
         //noinspection SimplifiableIfStatement
         if (id == R.id.nextViewButton) {
+            Group group = new Group();
+            group.setOnline(false);
+            if(title.getText().length() > 0) {
+                group.setGroupTitle(title.getText().toString());
+            } else {
+                group.setGroupTitle("NO TITLE SET");
+            }
             Intent intent = new Intent(this, AddFriendsToGroupActivity.class);
-            intent.putExtra("title", title.getText().toString());
+            intent.putExtra("group", group);
             startActivityForResult(intent, REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
             return true;
@@ -44,8 +51,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         if(item.getItemId() == android.R.id.home){
             Intent intent = new Intent();
             this.setResult(Activity.RESULT_OK, intent);
-            this.finish();
-            //this.finishAfterTransition();
+            this.finishAfterTransition();
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }
 
@@ -63,6 +69,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        this.finishAfterTransition();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         super.onBackPressed();
     }
