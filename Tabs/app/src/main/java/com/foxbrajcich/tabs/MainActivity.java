@@ -25,7 +25,9 @@ public class MainActivity extends AppCompatActivity
         MainActivityFragment.OnSectionSelected,
         MainActivityFragment.OnGetList {
 
-    List<Group> groupList = new ArrayList<>();
+    LocalDatabaseHelper dbHelper;
+
+    List<Group> groupList;
     List<User> friendList = new ArrayList<>();
     List<Transaction> transactionList = new ArrayList<>();
 
@@ -54,6 +56,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //populate the list of groups from the local database
+        dbHelper = new LocalDatabaseHelper(this);
+        groupList = dbHelper.getAllOfflineGroups();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -202,6 +208,7 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == NEW_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if(data.hasExtra("group")) {
                 Group group = (Group) data.getSerializableExtra("group");
+                if(!group.isOnline()) dbHelper.addGroupToDatabase(group); //if it's an offline group add it to the local db
                 groupList.add(group);
                 updateFragment(1);
             }

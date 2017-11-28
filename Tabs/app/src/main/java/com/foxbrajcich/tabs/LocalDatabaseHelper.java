@@ -138,11 +138,15 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
     public void linkUsersToGroup(List<User> members, int groupId){
 
-        String linkUsersSql = "INSERT INTO " + TABLE_GROUP_USERS;
+        if(members.size() < 1){
+            return;
+        }
+
+        String linkUsersSql = "INSERT INTO " + TABLE_GROUP_USERS + " VALUES";
 
         for(int i = 0; i < members.size(); i++){
             if(i != 0) linkUsersSql += ","; //don't include a comma for the first set of values
-            linkUsersSql += " VALUES(null, '" + members.get(i).getName() + "', " + groupId + ")";
+            linkUsersSql += " (null, '" + members.get(i).getName() + "', " + groupId + ")";
         }
 
         linkUsersSql += ";";
@@ -153,14 +157,18 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
     public void linkExpensesToGroup(List<Expense> expenses, int groupId){
 
-        String linkExpensesSql = "INSERT INTO " + TABLE_EXPENSES;
+        if(expenses.size() < 1){
+            return;
+        }
+
+        String linkExpensesSql = "INSERT INTO " + TABLE_EXPENSES + " VALUES";
 
         for(int i = 0; i < expenses.size(); i++){
             Expense expense = expenses.get(0);
 
             if(i != 0) linkExpensesSql += ",";
 
-            linkExpensesSql += " VALUES(null, '" + expense.getContent() + "', '" + expense.getUserName()
+            linkExpensesSql += " (null, '" + expense.getContent() + "', '" + expense.getUserName()
                     + "', " + groupId + ", " + expense.getAmount() + ")";
         }
 
@@ -173,10 +181,13 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
     public void addGroupToDatabase(Group group){
 
-        String addGroupSql = "INSERT INTO " + TABLE_GROUPS + " VALUES(null, '" + group.getGroupTitle() + "'); select last_insert_rowid()";
+        String addGroupSql = "INSERT INTO " + TABLE_GROUPS + " VALUES(null, '" + group.getGroupTitle() + "')";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor c = db.rawQuery(addGroupSql, null);
+        db.execSQL(addGroupSql);
+
+        String getIndexSql = "SELECT last_insert_rowid()";
+        Cursor c = db.rawQuery(getIndexSql, null);
 
         c.moveToFirst();
         int groupId = (int) c.getLong(0);
