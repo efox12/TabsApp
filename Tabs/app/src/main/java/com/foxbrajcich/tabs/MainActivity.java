@@ -148,7 +148,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
     public void updateFragment(int i){
         List<Fragment> allFragments = getSupportFragmentManager().getFragments();
         if (allFragments != null) {

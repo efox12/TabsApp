@@ -8,17 +8,17 @@ import java.io.Serializable;
 
 public class Expense implements Serializable{
     private String content;
+    private String userName;
     private int expenseId;
     private double amount;
     private boolean completed;
     private int userId;
-    private String username;
 
     public Expense(){}
 
-    public Expense(String content, String username, double amount){
+    public Expense(String content, String userName, double amount){
         this.content = content;
-        this.username = username;
+        this.userName = userName;
         this.amount = amount;
     }
 
@@ -38,7 +38,13 @@ public class Expense implements Serializable{
         return content;
     }
 
-    public String getUsername(){ return username; }
+    public String getUserName(){
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public void payPartial(){
 

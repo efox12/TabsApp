@@ -160,7 +160,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
             if(i != 0) linkExpensesSql += ",";
 
-            linkExpensesSql += " VALUES(null, '" + expense.getContent() + "', '" + expense.getUsername()
+            linkExpensesSql += " VALUES(null, '" + expense.getContent() + "', '" + expense.getUserName()
                     + "', " + groupId + ", " + expense.getAmount() + ")";
         }
 

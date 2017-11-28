@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +36,7 @@ public class GroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(GroupActivity.this, AddExpenseActivity.class);
+                intent.putExtra("group", group);
                 startActivityForResult(intent, REQUEST_CODE);
                 overridePendingTransition(R.anim.slide_up_bottom, R.anim.fade_out);
             }
@@ -48,16 +50,20 @@ public class GroupActivity extends AppCompatActivity {
 
         actionBar.setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
         ListView listView = (ListView) findViewById(R.id.expenseList);
-        adapter = new ArrayAdapter<Expense>(this, android.R.layout.simple_list_item_2, android.R.id.text1, expenses){
+        adapter = new ArrayAdapter<Expense>(this, R.layout.expense_list_layout, R.id.nameTextView, expenses){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
 
-                TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
-                textView1.setText("$"+String.format("%.02f",expenses.get(position).getAmount()));
-                textView2.setText(expenses.get(position).getContent());
+                ImageView imageView = (ImageView) view.findViewById(R.id.groupImageView);
+                TextView textView = (TextView) view.findViewById(R.id.nameTextView);
+                TextView textView2 = (TextView) view.findViewById(R.id.amountTextView);
+                TextView textView3 = (TextView) view.findViewById(R.id.contentTextView);
+                imageView.setImageResource(android.R.drawable.btn_plus);
+                textView.setText(expenses.get(position).getUserName());
+                textView2.setText("$"+String.format("%.02f",expenses.get(position).getAmount()));
+                textView3.setText(expenses.get(position).getContent());
                 return view;
             }
         };
@@ -76,6 +82,7 @@ public class GroupActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.addExpense) {
             Intent intent = new Intent(GroupActivity.this, GroupInfoActivity.class);
+            intent.putExtra("group", group);
             startActivityForResult(intent, REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
           return true;
@@ -107,8 +114,9 @@ public class GroupActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if(data.hasExtra("expense")){
                 expenses.add((Expense) data.getSerializableExtra("expense"));
-                group.setExpenses(expenses);
-                System.out.println(group.getExpenses().get(0).getAmount());
+                group = (Group) data.getSerializableExtra("group");
+                //group.setExpenses(expenses);
+                //System.out.println(group.getExpenses().get(0).getAmount());
                 adapter.notifyDataSetChanged();
             }
         }
