@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
 
                 Intent intent = new Intent(MainActivity.this, CreateGroupActivity.class);
                 startActivityForResult(intent, NEW_REQUEST_CODE);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
+                overridePendingTransition(R.anim.slide_up_bottom, R.anim.fade_out);
 
             }
         });
@@ -219,6 +219,7 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra("group", group);
                 intent.putExtra("position", groupList.size() - 1);
                 startActivityForResult(intent, EXISTING_GROUP_REQUEST_CODE);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         }
         if (requestCode == EXISTING_GROUP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {

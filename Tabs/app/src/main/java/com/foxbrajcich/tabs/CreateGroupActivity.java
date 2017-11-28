@@ -52,7 +52,7 @@ public class CreateGroupActivity extends AppCompatActivity {
             Intent intent = new Intent();
             this.setResult(Activity.RESULT_OK, intent);
             this.finishAfterTransition();
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
         }
 
         return super.onOptionsItemSelected(item);
@@ -65,12 +65,15 @@ public class CreateGroupActivity extends AppCompatActivity {
             this.setResult(Activity.RESULT_OK, data);
             this.finish();
         }
+        //if (requestCode == REQUEST_CODE && resultCode == 100) {
+
+        //}
     }
 
     @Override
     public void onBackPressed() {
         this.finishAfterTransition();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
         super.onBackPressed();
     }
 
