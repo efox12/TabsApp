@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         //populate the list of groups from the local database
-        dbHelper = new LocalDatabaseHelper(this);
+        dbHelper = LocalDatabaseHelper.getInstance(this);
         groupList = dbHelper.getAllOfflineGroups();
 
         // Create the adapter that will return a fragment for each of the three
@@ -76,9 +76,11 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddSomethingActivity.class);
+
+                Intent intent = new Intent(MainActivity.this, CreateGroupActivity.class);
                 startActivityForResult(intent, NEW_REQUEST_CODE);
-                overridePendingTransition(R.anim.slide_up_bottom, R.anim.fade_out);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
+
             }
         });
 
@@ -211,6 +213,12 @@ public class MainActivity extends AppCompatActivity
                 if(!group.isOnline()) dbHelper.addGroupToDatabase(group); //if it's an offline group add it to the local db
                 groupList.add(group);
                 updateFragment(1);
+
+                //open newly added group in GroupActivity
+                Intent intent = new Intent(this, GroupActivity.class);
+                intent.putExtra("group", group);
+                intent.putExtra("position", groupList.size() - 1);
+                startActivityForResult(intent, EXISTING_GROUP_REQUEST_CODE);
             }
         }
         if (requestCode == EXISTING_GROUP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {

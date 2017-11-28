@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.StringBuilderPrinter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +13,8 @@ import java.util.List;
  */
 
 public class LocalDatabaseHelper extends SQLiteOpenHelper {
+
+    private static LocalDatabaseHelper mInstance = null;
 
     //global constants for the db
     static final String DATABASE_NAME = "databaseLocalGroups";
@@ -31,7 +32,15 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
     static final String GROUPID = "groupid";
     static final String AMOUNT = "amount";
 
-    public LocalDatabaseHelper(Context context){
+    public static LocalDatabaseHelper getInstance(Context context){
+        if(mInstance == null){
+            mInstance = new LocalDatabaseHelper(context.getApplicationContext());
+        }
+
+        return mInstance;
+    }
+
+    private LocalDatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

@@ -23,7 +23,6 @@ import java.util.List;
 import static android.app.Activity.RESULT_OK;
 
 public class AddFriendsToGroupActivity extends AppCompatActivity {
-    final int REQUEST_CODE = 1;
     ArrayAdapter<User> adapter;
     List<User> users = new ArrayList<>();
     List<User> groupMembers = new ArrayList<>();
@@ -91,23 +90,14 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.nextViewButton) {
-            Intent intent = new Intent(this, GroupActivity.class);
+            Intent intent = new Intent();
             intent.putExtra("group", group);
-            startActivityForResult(intent, REQUEST_CODE);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
+            this.setResult(RESULT_OK, intent);
+            finish();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            this.setResult(Activity.RESULT_OK, data);
-            this.finish();
-        }
     }
 
     @Override
