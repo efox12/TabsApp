@@ -206,4 +206,15 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public void addExpenseToGroup(Group group, Expense expense){
+
+        String addExpenseSql = "INSERT INTO " + TABLE_EXPENSES +
+                " VALUES(null, '" + expense.getContent() + "', " +
+                "'" + expense.getUserName() + "', " + group.getGroupId() + ", " + expense.getAmount() + ")";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(addExpenseSql);
+
+    }
+
 }

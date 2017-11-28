@@ -10,6 +10,7 @@ import java.util.List;
  */
 
 public class Group implements Serializable{
+
     private String groupTitle;
     private int groupId;
     private List<User> members;
@@ -32,6 +33,14 @@ public class Group implements Serializable{
 
     public String getGroupTitle() {
         return groupTitle;
+    }
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 
     public void setMembers(List<User> members) {

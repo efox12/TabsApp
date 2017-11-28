@@ -22,14 +22,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroupActivity extends AppCompatActivity {
+
     final static int REQUEST_CODE = 1;
     Group group;
     List<Expense> expenses = new ArrayList<>();
     ArrayAdapter<Expense> adapter;
+    LocalDatabaseHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
+
+        //get instance of the offline group database
+        dbHelper = LocalDatabaseHelper.getInstance(this);
+
         ActionBar actionBar = getSupportActionBar();
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -114,9 +121,7 @@ public class GroupActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if(data.hasExtra("expense")){
                 expenses.add((Expense) data.getSerializableExtra("expense"));
-                group = (Group) data.getSerializableExtra("group");
-                //group.setExpenses(expenses);
-                //System.out.println(group.getExpenses().get(0).getAmount());
+                dbHelper.addExpenseToGroup(group, (Expense) data.getSerializableExtra("expense"));
                 adapter.notifyDataSetChanged();
             }
         }
