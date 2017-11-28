@@ -14,8 +14,17 @@ public class Group implements Serializable{
     private int groupId;
     private List<User> members;
     List<Expense> expenses = new ArrayList<>();
-    private Hashtable<Integer, List<Expense>> expenseTable;
     private boolean isOnline;
+
+    public Group(){}
+
+    public Group(String groupTitle, int groupId, List<User> members, List<Expense> expenses, boolean isOnline){
+        this.groupTitle = groupTitle;
+        this.groupId = groupId;
+        this.members = members;
+        this.expenses = expenses;
+        this.isOnline = isOnline;
+    }
 
     public void setGroupTitle(String groupTitle) {
         this.groupTitle = groupTitle;

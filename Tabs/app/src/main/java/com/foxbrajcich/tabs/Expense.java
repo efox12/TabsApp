@@ -12,7 +12,15 @@ public class Expense implements Serializable{
     private double amount;
     private boolean completed;
     private int userId;
+    private String username;
 
+    public Expense(){}
+
+    public Expense(String content, String username, double amount){
+        this.content = content;
+        this.username = username;
+        this.amount = amount;
+    }
 
     public void setAmount(double amount) {
         this.amount = amount;
@@ -29,6 +37,8 @@ public class Expense implements Serializable{
     public String getContent() {
         return content;
     }
+
+    public String getUsername(){ return username; }
 
     public void payPartial(){
 

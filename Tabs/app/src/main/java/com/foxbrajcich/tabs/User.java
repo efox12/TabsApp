@@ -17,6 +17,12 @@ public class User implements Serializable{
     private List<Expense> expenses;
     private boolean isOnline;
 
+    public User(){}
+
+    public User(String name){
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
