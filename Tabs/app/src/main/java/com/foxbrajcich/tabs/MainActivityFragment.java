@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -139,16 +140,18 @@ public class MainActivityFragment extends ListFragment{
 
         if(getArguments().getInt(ARG_SECTION_NUMBER) == 2){
             groups = onGetList.getGroupList();
-            groupsAdapter = new ArrayAdapter<Group>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, groups){
+            groupsAdapter = new ArrayAdapter<Group>(super.getContext(), R.layout.group_list_layout, R.id.groupTextView, groups){
                 @NonNull
                 @Override
                 public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                     View view = super.getView(position, convertView, parent);
 
-                    TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
-                    TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
-                    textView1.setText(groups.get(position).getGroupTitle());
-                    textView2.setText("Group " + position);
+                    ImageView imageView = (ImageView) view.findViewById(R.id.groupImageView);
+                    TextView textView = (TextView) view.findViewById(R.id.groupTextView);
+                    TextView textView1 = (TextView) view.findViewById(R.id.groupTextView2);
+                    textView.setText(groups.get(position).getGroupTitle());
+                    textView1.setText("Group");
+                    imageView.setImageResource(android.R.drawable.alert_dark_frame);
                     return view;
                 }
             };
