@@ -11,7 +11,6 @@ public class Expense implements Serializable{
     private String userName;
     private int expenseId;
     private double amount;
-    private boolean completed;
     private int userId;
 
     public Expense(){}
@@ -44,18 +43,6 @@ public class Expense implements Serializable{
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    public void payPartial(){
-
-    }
-
-    public void payFull(){
-
-    }
-
-    public void setCompleted(){
-
     }
 
 }

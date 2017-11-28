@@ -15,15 +15,17 @@ public class Group implements Serializable{
     private int groupId;
     private List<User> members;
     List<Expense> expenses = new ArrayList<>();
+    private List<Transaction> transactions = new ArrayList<>();
     private boolean isOnline;
 
     public Group(){}
 
-    public Group(String groupTitle, int groupId, List<User> members, List<Expense> expenses, boolean isOnline){
+    public Group(String groupTitle, int groupId, List<User> members, List<Expense> expenses, List<Transaction> transactions, boolean isOnline){
         this.groupTitle = groupTitle;
         this.groupId = groupId;
         this.members = members;
         this.expenses = expenses;
+        this.transactions = transactions;
         this.isOnline = isOnline;
     }
 
@@ -65,5 +67,13 @@ public class Group implements Serializable{
 
     public List<Expense> getExpenses() {
         return expenses;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 }
