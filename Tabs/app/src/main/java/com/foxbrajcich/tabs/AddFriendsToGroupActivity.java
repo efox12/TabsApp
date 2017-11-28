@@ -87,10 +87,17 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        if(item.getItemId() == android.R.id.home){
+            Intent intent = getIntent();
+            intent.putExtra("group", group);
+            this.setResult(100, intent);
+            finishAfterTransition();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            return true;
+        }
         //noinspection SimplifiableIfStatement
         if (id == R.id.nextViewButton) {
-            Intent intent = new Intent();
+            Intent intent = getIntent();
             intent.putExtra("group", group);
             this.setResult(RESULT_OK, intent);
             finish();
@@ -102,6 +109,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        finishAfterTransition();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         super.onBackPressed();
     }
