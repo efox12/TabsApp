@@ -35,7 +35,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_friends_to_group);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Add friends");
-        final User user = new User();
+        User user = new User();
         user.setName("Add Offline User");
         group = (Group) getIntent().getSerializableExtra("group");
 
@@ -64,6 +64,8 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if(editText.length() > 0){
+                    User user = new User();
+                    user.setName(editText.getText().toString());
                     groupMembers.add(user);
                     group.setMembers(groupMembers);
                     groupMemberNames.add(editText.getText().toString());

@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 public class Expense implements Serializable{
     private String content;
+    private String userName;
     private int expenseId;
     private double amount;
     private boolean completed;
@@ -28,6 +29,14 @@ public class Expense implements Serializable{
 
     public String getContent() {
         return content;
+    }
+
+    public String getUserName(){
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public void payPartial(){
