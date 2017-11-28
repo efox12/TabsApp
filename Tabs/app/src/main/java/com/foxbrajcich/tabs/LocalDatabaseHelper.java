@@ -24,6 +24,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
     static final String TABLE_GROUPS = "tableGroups";
     static final String TABLE_GROUP_USERS = "tableGroupUsers";
     static final String TABLE_EXPENSES = "tableExpenses";
+    static final String TABLE_TRANSACTIONS = "tableTransactions";
 
     //table column constants
     static final String ID = "_id"; //used in multiple tables
@@ -31,6 +32,8 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
     static final String USERNAME = "username";
     static final String GROUPID = "groupid";
     static final String AMOUNT = "amount";
+    static final String FROM_USER = "fromUser";
+    static final String TO_USER = "toUser";
 
     public static LocalDatabaseHelper getInstance(Context context){
         if(mInstance == null){
@@ -74,6 +77,18 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
                         AMOUNT + " FLOAT)";
 
         db.execSQL(createExpenseTable);
+
+        //create the table of Transactions
+        String createTransactionTable =
+                "CREATE TABLE " + TABLE_TRANSACTIONS + "(" +
+                        ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        NAME + " TEXT, " +
+                        FROM_USER + " TEXT, " +
+                        TO_USER + " TEXT, " +
+                        AMOUNT + " FLOAT, " +
+                        GROUPID + " INTEGER)";
+
+        db.execSQL(createTransactionTable);
 
     }
 
@@ -216,5 +231,55 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(addExpenseSql);
 
     }
+
+    public void linkTransactionsToGroup(List<Transaction> transactions, int groupId){
+        if(transactions.size() < 1){
+            return;
+        }
+
+        String linkTransactionsSql = "INSERT INTO " + TABLE_TRANSACTIONS + " VALUES";
+
+        for(int i = 0; i < transactions.size(); i++){
+            Transaction transaction = transactions.get(0);
+
+            if(i != 0) linkTransactionsSql += ",";
+
+            linkTransactionsSql += " (null, '" + transaction.getName() + "', '" + transaction.getSendingUserName()
+                    + "', '" + transaction.getReceivingUserName() + "', " + transaction.getAmount() + ", " + groupId + ")";
+        }
+
+        linkTransactionsSql += ";";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(linkTransactionsSql);
+    }
+
+    public List<Transaction> getGroupTransactionsById(int groupId){
+        List<Transaction> transactions = new ArrayList<>();
+
+
+        String getGroupTransactionsQuery =
+                "SELECT * FROM " + TABLE_TRANSACTIONS + " WHERE " + GROUPID + "=" + groupId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(getGroupTransactionsQuery, null);
+
+        while(cursor.moveToNext()){
+
+            Transaction transaction = new Transaction();
+
+            //populate the new transaction object
+            transaction.setTransactionId(cursor.getInt(0));
+            transaction.setName(cursor.getString(1));
+            transaction.setSendingUserName(cursor.getString(2));
+            transaction.setReceivingUserName(cursor.getString(3));
+            transaction.setAmount(cursor.getDouble(4));
+
+            transactions.add(transaction);
+        }
+
+        return transactions;
+    }
+
 
 }
