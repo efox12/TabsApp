@@ -19,7 +19,7 @@ import java.util.List;
 
 public class GroupInfoActivity extends AppCompatActivity {
 
-    ArrayAdapter<User> adapter;
+    ArrayAdapter<Debt> adapter;
     List<User> groupMembers = new ArrayList<>();
     Group group;
     @Override
@@ -28,23 +28,51 @@ public class GroupInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_info);
         group = (Group) getIntent().getSerializableExtra("group");
         groupMembers = group.getMembers();
-        TextView textView =(TextView) findViewById(R.id.textView4);
-        textView.setText("Group Total: $" + String.format("%.02f",totalExpenses(group.getExpenses())));
+        TextView totalGroupExpenseView =(TextView) findViewById(R.id.textView4);
+        TextView totalUserExpenseView = (TextView) findViewById(R.id.textView5);
+        totalGroupExpenseView.setText("Group Total: $" + String.format("%.02f",totalExpenses(group.getExpenses())));
         ListView listView = (ListView) findViewById(R.id.friendsList);
-        adapter = new ArrayAdapter<User>(this, R.layout.expense_list_layout, R.id.nameTextView, groupMembers){
+
+        //find the object for the user who is logged in
+        User localUser = null;
+        for(User user : groupMembers) {
+            if(user.getName().equals(UserSession.getName())){
+                localUser = user;
+                break;
+            }
+        }
+
+        //get the list of debts that this user owes
+        final List<Debt> debts;
+        if(localUser != null) {
+            debts = group.getDebtsForUser(localUser);
+            totalUserExpenseView.setText("Your Expenses: $" + String.format("%.02f", group.getTotalExpenseForUser(localUser)));
+        }else{
+            debts = new ArrayList<>();
+        }
+
+        adapter = new ArrayAdapter<Debt>(this, R.layout.expense_list_layout, R.id.nameTextView, debts){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
 
+
                 ImageView imageView = (ImageView) view.findViewById(R.id.groupImageView);
                 TextView textView = (TextView) view.findViewById(R.id.nameTextView);
                 TextView textView2 = (TextView) view.findViewById(R.id.amountTextView);
                 TextView textView3 = (TextView) view.findViewById(R.id.contentTextView);
+<<<<<<< HEAD
                 imageView.setImageResource(R.drawable.user);
                 textView.setText(groupMembers.get(position).getName());
                 textView2.setText("Contributed $" + String.format("%.02f",totalExpenses(sortExpenses(groupMembers.get(position)))));
                 textView3.setText("You owe $");
+=======
+                imageView.setImageResource(android.R.drawable.btn_plus);
+                textView.setText(debts.get(position).getDebtor().getName());
+                textView2.setText("$" + String.format("%.02f", debts.get(position).getAmount()));
+                textView3.setText("Net Amount Owed");
+>>>>>>> origin/master
                 return view;
             }
         };

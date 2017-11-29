@@ -34,10 +34,10 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_friends_to_group);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Add friends");
-        User user = new User();
-        user.setName("Add Offline User");
+        User offlineUser = new User();
+        offlineUser.setName("Add Offline User");
         group = (Group) getIntent().getSerializableExtra("group");
-        users.add(0,user);
+        users.add(0, offlineUser);
         ListView listView = (ListView) findViewById(R.id.friendsList);
         adapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_2, android.R.id.text1, users){
             @NonNull
@@ -58,8 +58,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         final EditText editText = (EditText) findViewById(R.id.addFriendsEditText);
         final TextView textView = (TextView) findViewById(R.id.groupMembers);
 
-        User homeUser = new User();
-        homeUser.setName("Home User");
+        User homeUser = new User(UserSession.getName());
         groupMembers.add(homeUser);
         group.setMembers(groupMembers);
         groupMemberNames.add(homeUser.getName());
