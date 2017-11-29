@@ -40,7 +40,6 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Add friends");
         group = (Group) getIntent().getSerializableExtra("group");
-
         ListView listView = (ListView) findViewById(R.id.friendsList);
         adapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_2, android.R.id.text1, users){
             @NonNull
@@ -88,15 +87,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                /*User offlineUser = new User();
-                offlineUser.setName("Add Offline User");
-                if(editText.length() > 0){
-                    users.add(0, offlineUser);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    users.remove(0);
-                    adapter.notifyDataSetChanged();
-                }*/
+
             }
 
             @Override
@@ -123,6 +114,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_title_menu, menu);
+        menu.getItem(0).setTitle("DONE");
         return true;
     }
 

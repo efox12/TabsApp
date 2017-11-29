@@ -7,6 +7,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.ImageView;
 public class CreateGroupActivity extends AppCompatActivity implements View.OnClickListener {
     final int REQUEST_CODE = 1;
     int iconId;
+    EditText title;
     View.OnClickListener listener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +26,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_create_group);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Name your group");
-
+        title = (EditText) findViewById(R.id.titleEditText);
         iconId = 0;
 
         ImageView imageView1 = (ImageView) findViewById(R.id.icon1);
@@ -66,6 +69,28 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_title_menu, menu);
+        final Menu menu1 = menu;
+        menu1.getItem(0).setTitle("SKIP");
+        title.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(title.length() > 0){
+                    menu1.getItem(0).setTitle("NEXT");
+                } else {
+                    menu1.getItem(0).setTitle("SKIP");
+                }
+            }
+        });
         return true;
     }
 
@@ -75,7 +100,6 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        EditText title = (EditText) findViewById(R.id.titleEditText);
         //noinspection SimplifiableIfStatement
         if (id == R.id.nextViewButton) {
             Group group = new Group();
