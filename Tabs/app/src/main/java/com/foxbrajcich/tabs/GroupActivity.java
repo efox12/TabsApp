@@ -128,7 +128,7 @@ public class GroupActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if(data.hasExtra("expense")){
                 expenses.add((Expense) data.getSerializableExtra("expense"));
-                dbHelper.addExpenseToGroup(group, (Expense) data.getSerializableExtra("expense"));
+                dbHelper.addExpenseToGroup(group,(Expense) data.getSerializableExtra("expense"));
                 adapter.notifyDataSetChanged();
             }
         }
