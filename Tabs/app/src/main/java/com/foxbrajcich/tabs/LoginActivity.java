@@ -3,7 +3,9 @@ package com.foxbrajcich.tabs;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -40,6 +42,8 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
+    public static final String PREFERENCES_FILE = "user_session_storage";
+
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -67,6 +71,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        SharedPreferences preferences = this.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+        String storedName =  preferences.getString("name", "");
+        String storedUsername = preferences.getString("username", "");
+
+        if(storedName != "" || storedUsername != ""){
+            UserSession.setName(storedName);
+            UserSession.setUsername(storedUsername);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -337,6 +355,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 UserSession.setName(mEmail);
                 UserSession.setUsername(mEmail);
+
+                //save the user's login to shared preferences
+                SharedPreferences preferences = LoginActivity.this.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("name", UserSession.getName());
+                editor.putString("username", UserSession.getUsername());
+                editor.commit();
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -352,5 +378,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
     }
+
 }
 
