@@ -66,7 +66,7 @@ public class GroupInfoActivity extends AppCompatActivity {
                 textView.setText(groupMembers.get(position).getName());
                 textView2.setText("Contributed $" + String.format("%.02f",totalExpenses(sortExpenses(groupMembers.get(position)))));
                 textView3.setText("You owe $");
-                imageView.setImageResource(android.R.drawable.btn_plus);
+                imageView.setImageResource(R.drawable.user);
                 textView.setText(debts.get(position).getDebtor().getName());
                 textView2.setText("$" + String.format("%.02f", debts.get(position).getAmount()));
                 textView3.setText("Net Amount Owed");
