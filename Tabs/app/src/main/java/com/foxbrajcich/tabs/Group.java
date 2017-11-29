@@ -76,4 +76,53 @@ public class Group implements Serializable{
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
     }
+
+    public List<Debt> getDebtsForUser(User user){
+        if(!members.contains(user)){
+            return null;
+        }
+
+        List<Debt> debtList = new ArrayList<>();
+
+        for(User currentDebtor : members){
+            if(currentDebtor != user) {
+                Debt debt = new Debt(currentDebtor);
+                double owedToDebtor = 0d, owedByDebtor = 0d;
+
+
+                //total the expenses that this user owes to the given debtor
+                for(Expense expense : expenses){
+                    if(expense.getUserName().equals(currentDebtor.getName())){
+                        owedToDebtor += expense.getAmount() / members.size();
+                    }else if(expense.getUserName().equals(user.getName())){
+                        owedByDebtor += expense.getAmount() / members.size();
+                    }
+                }
+
+                //subtract payments made to the debtor from the debt and add payments received
+                for(Transaction transaction : transactions){
+                    if(transaction.getReceivingUserName().equals(currentDebtor.getName()) && transaction.getSendingUserName().equals(user.getName())){
+                        owedToDebtor -= transaction.getAmount();
+                    }else if(transaction.getReceivingUserName().equals(user.getName()) && transaction.getSendingUserName().equals(currentDebtor.getName())){
+                        owedByDebtor -= transaction.getAmount();
+                    }
+                }
+
+
+                if(owedToDebtor < owedByDebtor){
+                    //the other person owes more money to this user than they do to them.
+                    //Return 0 for the amount owed by this user and the difference to the other user.
+                    debt.setAmount(0d);
+                }else{
+                    debt.setAmount(owedToDebtor - owedByDebtor);
+                }
+
+                debtList.add(debt);
+
+            }
+        }
+
+        return debtList;
+
+    }
 }

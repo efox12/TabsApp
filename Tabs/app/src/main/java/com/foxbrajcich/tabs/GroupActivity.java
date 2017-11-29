@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,6 +77,12 @@ public class GroupActivity extends AppCompatActivity {
         };
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        for(User user : group.getMembers()){
+            for(Debt d : group.getDebtsForUser(user)) {
+                Log.d("TEST_FUNCTION", user.getName() + ", debt: " + d);
+            }
+        }
 
     }
 

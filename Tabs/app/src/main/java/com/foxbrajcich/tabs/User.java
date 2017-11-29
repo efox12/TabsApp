@@ -11,10 +11,7 @@ public class User implements Serializable{
     private String name;
     private String username;
     private int userId;
-    private int amountPaid;
-    private int amountOwed;
     private List<User> friends;
-    private List<Expense> expenses;
     private boolean isOnline;
 
     public User(){}
