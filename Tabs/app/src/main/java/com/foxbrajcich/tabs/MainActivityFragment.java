@@ -151,7 +151,7 @@ public class MainActivityFragment extends ListFragment{
                     TextView textView1 = (TextView) view.findViewById(R.id.groupTextView2);
                     textView.setText(groups.get(position).getGroupTitle());
                     textView1.setText("Group");
-                    imageView.setImageResource(android.R.drawable.alert_dark_frame);
+                    imageView.setImageResource(R.drawable.game);
                     return view;
                 }
             };
