@@ -37,7 +37,6 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         User user = new User();
         user.setName("Add Offline User");
         group = (Group) getIntent().getSerializableExtra("group");
-
         users.add(0,user);
         ListView listView = (ListView) findViewById(R.id.friendsList);
         adapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_2, android.R.id.text1, users){
@@ -58,7 +57,14 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
 
         final EditText editText = (EditText) findViewById(R.id.addFriendsEditText);
         final TextView textView = (TextView) findViewById(R.id.groupMembers);
-        textView.setText("Members: ");
+
+        User homeUser = new User();
+        homeUser.setName("Home User");
+        groupMembers.add(homeUser);
+        group.setMembers(groupMembers);
+        groupMemberNames.add(homeUser.getName());
+        textView.setText("Members: " + groupMemberNames.toString());
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
