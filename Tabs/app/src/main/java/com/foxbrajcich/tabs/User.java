@@ -12,12 +12,14 @@ public class User implements Serializable{
     private String username;
     private int userId;
     private int amountPaid;
-    private int amountOwed;
+    private double amountOwed;
     private List<User> friends;
     private List<Expense> expenses;
     private boolean isOnline;
 
-    public User(){}
+    public User(){
+        amountOwed = 0;
+    }
 
     public User(String name){
         this.name = name;
@@ -29,5 +31,13 @@ public class User implements Serializable{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setAmountOwed(double amountOwed) {
+        this.amountOwed = amountOwed;
+    }
+
+    public double getAmountOwed() {
+        return amountOwed;
     }
 }
