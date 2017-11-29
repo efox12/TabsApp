@@ -5,6 +5,7 @@ package com.foxbrajcich.tabs;
  */
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;

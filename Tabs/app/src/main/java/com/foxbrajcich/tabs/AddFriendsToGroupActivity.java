@@ -7,6 +7,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,16 +31,16 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
     List<User> groupMembers = new ArrayList<>();
     List<String> groupMemberNames = new ArrayList<>();
     Group group;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friends_to_group);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Add friends");
-        User offlineUser = new User();
-        offlineUser.setName("Add Offline User");
         group = (Group) getIntent().getSerializableExtra("group");
-        users.add(0, offlineUser);
+
         ListView listView = (ListView) findViewById(R.id.friendsList);
         adapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_2, android.R.id.text1, users){
             @NonNull
@@ -61,9 +64,12 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         User homeUser = new User(UserSession.getName());
         groupMembers.add(homeUser);
         group.setMembers(groupMembers);
-        groupMemberNames.add(homeUser.getName());
+        groupMemberNames.add(0, homeUser.getName());
         textView.setText("Members: " + groupMemberNames.toString());
-
+        //User offlineUser = new User();
+        //offlineUser.setName("Add Offline User");
+        //users.add(0, offlineUser);
+        //adapter.notifyDataSetChanged();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -75,6 +81,40 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
                     groupMemberNames.add(editText.getText().toString());
                     editText.setText("");
                     textView.setText("Members: " + groupMemberNames.toString());
+                }
+            }
+        });
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                /*User offlineUser = new User();
+                offlineUser.setName("Add Offline User");
+                if(editText.length() > 0){
+                    users.add(0, offlineUser);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    users.remove(0);
+                    adapter.notifyDataSetChanged();
+                }*/
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                User offlineUser = new User();
+                offlineUser.setName("Add Offline User");
+                if(editText.length() > 0){
+                    if(users.size() == 0 || users.get(0).getName().compareTo(offlineUser.getName()) != 0) {
+                        users.add(0, offlineUser);
+                        adapter.notifyDataSetChanged();
+                    }
+                } else {
+                    if(users.get(0).getName().compareTo(offlineUser.getName()) == 0)
+                    users.remove(0);
+                    adapter.notifyDataSetChanged();
                 }
             }
         });
