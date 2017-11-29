@@ -75,8 +75,6 @@ public class AddExpenseActivity extends AppCompatActivity {
                 expense.setUserName(users.get(spinner.getSelectedItemPosition()).getName());
                 expense.setAmount(Double.valueOf(expenseAmount.getText().toString()));
                 expense.setContent(expenseDescription.getText().toString());
-                users.get(spinner.getSelectedItemPosition()).setAmountOwed(
-                        users.get(spinner.getSelectedItemPosition()).getAmountOwed()+expense.getAmount());
                 intent.putExtra("expense", expense);
                 setResult(RESULT_OK, intent);
                 finishAfterTransition();
