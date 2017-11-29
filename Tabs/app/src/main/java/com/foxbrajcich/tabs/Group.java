@@ -14,6 +14,7 @@ public class Group implements Serializable{
     private String groupTitle;
     private int groupId;
     private List<User> members;
+    private int groupIconId;
     List<Expense> expenses = new ArrayList<>();
     private List<Transaction> transactions = new ArrayList<>();
     private boolean isOnline;
@@ -28,6 +29,10 @@ public class Group implements Serializable{
         this.transactions = transactions;
         this.isOnline = isOnline;
     }
+
+    public void setGroupIconId(int groupIconId) { this.groupIconId = groupIconId; }
+
+    public int getGroupIconId() { return groupIconId; }
 
     public void setGroupTitle(String groupTitle) {
         this.groupTitle = groupTitle;

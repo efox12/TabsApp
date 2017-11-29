@@ -68,7 +68,7 @@ public class GroupActivity extends AppCompatActivity {
                 TextView textView = (TextView) view.findViewById(R.id.nameTextView);
                 TextView textView2 = (TextView) view.findViewById(R.id.amountTextView);
                 TextView textView3 = (TextView) view.findViewById(R.id.contentTextView);
-                imageView.setImageResource(android.R.drawable.btn_plus);
+                imageView.setImageResource(R.drawable.user);
                 textView.setText(expenses.get(position).getUserName());
                 textView2.setText("$"+String.format("%.02f",expenses.get(position).getAmount()));
                 textView3.setText(expenses.get(position).getContent());

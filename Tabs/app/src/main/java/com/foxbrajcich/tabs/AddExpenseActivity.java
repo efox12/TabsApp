@@ -38,7 +38,7 @@ public class AddExpenseActivity extends AppCompatActivity {
 
                 ImageView textView1 = (ImageView) view.findViewById(android.R.id.icon);
                 TextView textView2 = (TextView) view.findViewById(android.R.id.text1);
-                textView1.setImageResource(android.R.drawable.presence_online);
+                textView1.setImageResource(R.drawable.user);
                 textView2.setText(users.get(position).getName());
                 return view;
             }
@@ -50,7 +50,7 @@ public class AddExpenseActivity extends AppCompatActivity {
 
                 ImageView textView1 = (ImageView) view.findViewById(android.R.id.icon);
                 TextView textView2 = (TextView) view.findViewById(android.R.id.text1);
-                textView1.setImageResource(android.R.drawable.presence_online);
+                textView1.setImageResource(R.drawable.user);
                 textView2.setText(users.get(position).getName());
                 return view;
             }
