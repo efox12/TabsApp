@@ -125,4 +125,16 @@ public class Group implements Serializable{
         return debtList;
 
     }
+
+    public double getTotalExpenseForUser(User user){
+        double sum = 0d;
+
+        for(Expense expense: expenses){
+            if(expense.getUserName().equals(user.getName())){
+                sum += expense.getAmount();
+            }
+        }
+
+        return sum;
+    }
 }
