@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "553193208721",
+    "firebase_url": "https://tabs-app-backend-7e31d.firebaseio.com",
+    "project_id": "tabs-app-backend-7e31d",
+    "storage_bucket": "tabs-app-backend-7e31d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553193208721:android:f4b09e98d4c241b7",
+        "android_client_info": {
+          "package_name": "com.foxbrajcich.tabs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "553193208721-2adjgerq3v4cjjh9vd10li86lr3k99go.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.foxbrajcich.tabs",
+            "certificate_hash": "744a1a8e5304bf0d257bea899060246216ce7c35"
+          }
+        },
+        {
+          "client_id": "553193208721-7uhksr0l6sic01mhljtbcco8mkvep97q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBap7n1v9S59k-kHRgbJaRSExhmt9A7IoY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "553193208721-7uhksr0l6sic01mhljtbcco8mkvep97q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
