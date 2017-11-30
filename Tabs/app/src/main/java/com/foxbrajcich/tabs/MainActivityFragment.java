@@ -37,7 +37,7 @@ public class MainActivityFragment extends ListFragment{
 
     OnSectionSelected onSectionSelected;
     OnGetList onGetList;
-
+    View rootView;
 
     public interface OnSectionSelected{
         public void onGroupSelected(int position);
@@ -71,15 +71,44 @@ public class MainActivityFragment extends ListFragment{
     }
 
     public void updateFriends(){
+
         friends = onGetList.getFriendList();
+        if(friends.size() == 0){
+            TextView groupEmptyText = (TextView) rootView.findViewById(R.id.noFriendsText);
+            groupEmptyText.setText("You have no friends...");
+            rootView.findViewById(R.id.noFriendsText).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.VISIBLE);
+        } else {
+            rootView.findViewById(R.id.noFriendsText).setVisibility(View.GONE);
+            rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
+        }
         friendsAdapter.notifyDataSetChanged();
     }
     public void updateGroups(){
         groups = onGetList.getGroupList();
+        if(groups.size() == 0){
+            TextView groupEmptyText = (TextView) rootView.findViewById(R.id.noFriendsText);
+            groupEmptyText.setText("No Groups Created");
+            rootView.findViewById(R.id.noFriendsText).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.VISIBLE);
+        } else {
+            rootView.findViewById(R.id.noFriendsText).setVisibility(View.GONE);
+            rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
+        }
         groupsAdapter.notifyDataSetChanged();
     }
     public void updateTransactions(){
         transactions = onGetList.getTransactionList();
+        if(transactions.size() == 0){
+            TextView groupEmptyText = (TextView) rootView.findViewById(R.id.noFriendsText);
+            groupEmptyText.setText("No recent transactions");
+            rootView.findViewById(R.id.noFriendsText).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.VISIBLE);
+        } else {
+            //rootView.findViewById(android.R.id.list).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.noFriendsText).setVisibility(View.GONE);
+            rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
+        }
         transactionsAdapter.notifyDataSetChanged();
     }
 
@@ -118,65 +147,93 @@ public class MainActivityFragment extends ListFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(android.R.id.list);
         if(getArguments().getInt(ARG_SECTION_NUMBER) == 1){
             friends = onGetList.getFriendList();
-            friendsAdapter = new ArrayAdapter<User>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, friends){
-                @NonNull
-                @Override
-                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    View view = super.getView(position, convertView, parent);
+            if(friends.size() == 0){
+                TextView groupEmptyText = (TextView) rootView.findViewById(R.id.noFriendsText);
+                groupEmptyText.setText("You have no friends...");
+                rootView.findViewById(R.id.noFriendsText).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.VISIBLE);
+            } else {
+                rootView.findViewById(R.id.noFriendsText).setVisibility(View.GONE);
+                rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
+            }
+                friendsAdapter = new ArrayAdapter<User>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, friends) {
+                    @NonNull
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
 
-                    TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
-                    TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
-                    textView1.setText(friends.get(position).getName());
-                    textView2.setText("Friend " + position);
-                    return view;
-                }
-            };
+                        TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
+                        TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
+                        textView1.setText(friends.get(position).getName());
+                        textView2.setText("Friend " + position);
+                        return view;
+                    }
+                };
 
-            listView.setAdapter(friendsAdapter);
+                listView.setAdapter(friendsAdapter);
         }
 
         if(getArguments().getInt(ARG_SECTION_NUMBER) == 2){
             groups = onGetList.getGroupList();
-            groupsAdapter = new ArrayAdapter<Group>(super.getContext(), R.layout.group_list_layout, R.id.groupTextView, groups){
-                @NonNull
-                @Override
-                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    View view = super.getView(position, convertView, parent);
+            if(groups.size() == 0){
+                TextView groupEmptyText = (TextView) rootView.findViewById(R.id.noFriendsText);
+                groupEmptyText.setText("No Groups Created");
+                rootView.findViewById(R.id.noFriendsText).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.VISIBLE);
+            } else {
+                //rootView.findViewById(android.R.id.list).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.noFriendsText).setVisibility(View.GONE);
+                rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
+            }
+                groupsAdapter = new ArrayAdapter<Group>(super.getContext(), R.layout.group_list_layout, R.id.groupTextView, groups) {
+                    @NonNull
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
 
-                    ImageView imageView = (ImageView) view.findViewById(R.id.groupImageView);
-                    TextView textView = (TextView) view.findViewById(R.id.groupTextView);
-                    TextView textView1 = (TextView) view.findViewById(R.id.groupTextView2);
-                    textView.setText(groups.get(position).getGroupTitle());
-                    textView1.setText("Group");
-                    imageView.setImageResource(R.drawable.game);
-                    return view;
-                }
-            };
+                        ImageView imageView = (ImageView) view.findViewById(R.id.groupImageView);
+                        TextView textView = (TextView) view.findViewById(R.id.groupTextView);
+                        TextView textView1 = (TextView) view.findViewById(R.id.groupTextView2);
+                        textView.setText(groups.get(position).getGroupTitle());
+                        textView1.setText("Group");
+                        imageView.setImageResource(R.drawable.game);
+                        return view;
+                    }
+                };
 
             listView.setAdapter(groupsAdapter);
         }
 
-        if(getArguments().getInt(ARG_SECTION_NUMBER) == 3){
+        if(getArguments().getInt(ARG_SECTION_NUMBER) == 3) {
             transactions = onGetList.getTransactionList();
-            transactionsAdapter = new ArrayAdapter<Transaction>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, transactions){
-                @NonNull
-                @Override
-                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    View view = super.getView(position, convertView, parent);
+            if(transactions.size() == 0){
+                TextView groupEmptyText = (TextView) rootView.findViewById(R.id.noFriendsText);
+                groupEmptyText.setText("No recent transactions");
+                rootView.findViewById(R.id.noFriendsText).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.VISIBLE);
+            } else {
+                rootView.findViewById(R.id.noFriendsText).setVisibility(View.GONE);
+                rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
+            }
+                transactionsAdapter = new ArrayAdapter<Transaction>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, transactions) {
+                    @NonNull
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
 
-                    TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
-                    TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
-                    textView1.setText(transactions.get(position).getName());
-                    textView2.setText("Transaction " + position);
-                    return view;
-                }
-            };
+                        TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
+                        TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
+                        textView1.setText(transactions.get(position).getName());
+                        textView2.setText("Transaction " + position);
+                        return view;
+                    }
+                };
+                listView.setAdapter(transactionsAdapter);
 
-            listView.setAdapter(transactionsAdapter);
         }
         //adapter.notifyDataSetChanged();
         return rootView;
