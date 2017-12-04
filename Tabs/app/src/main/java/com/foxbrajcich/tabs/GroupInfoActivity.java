@@ -172,6 +172,7 @@ public class GroupInfoActivity extends AppCompatActivity {
         };
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
     }
 
     @Override
