@@ -17,33 +17,14 @@
         android:layout_columnWeight="1"
         android:layout_columnSpan="2">
     </Spinner>
-    <com.androidplot.pie.PieChart
-        style="@style/APDefacto.Light"
+
+    <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_columnWeight="1"
-        android:layout_rowWeight="10"
+        android:layout_rowWeight="15"
         android:layout_columnSpan="2"/>
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        android:text="Group Expense: "
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_columnWeight="1"
-        android:layout_rowWeight="1"
-        android:text="Your Expenses: "
-        android:textSize="16sp"
-        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView6"

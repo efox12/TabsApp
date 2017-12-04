@@ -4,11 +4,17 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.EmbossMaskFilter;
+import android.graphics.Typeface;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +26,33 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.androidplot.pie.PieChart;
-import com.androidplot.pie.PieRenderer;
-import com.androidplot.pie.Segment;
-import com.androidplot.pie.SegmentFormatter;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.Legend.LegendPosition;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.IDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.MPPointF;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.foxbrajcich.tabs.R.id.pieChart;
 import static com.foxbrajcich.tabs.R.id.spinner;
+import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 
 public class GroupInfoActivity extends AppCompatActivity {
 
@@ -40,19 +63,27 @@ public class GroupInfoActivity extends AppCompatActivity {
     List<Integer> colorList = new ArrayList<>();
     Group group;
     PieChart pieChart;
+
+    public static final int[] COLORS = {
+            rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c"), rgb("#3498db"), Color.rgb(193, 37, 82),
+            Color.rgb(255, 102, 0), Color.rgb(245, 199, 0), Color.rgb(106, 150, 31),
+            Color.rgb(179, 100, 53),  Color.rgb(217, 80, 138), Color.rgb(254, 149, 7),
+            Color.rgb(254, 247, 120), Color.rgb(106, 167, 134), Color.rgb(53, 194, 209),
+            Color.rgb(64, 89, 128), Color.rgb(149, 165, 124), Color.rgb(217, 184, 162),
+            Color.rgb(191, 134, 134), Color.rgb(179, 48, 80), Color.rgb(207, 248, 246),
+            Color.rgb(148, 212, 212), Color.rgb(136, 180, 187), Color.rgb(118, 174, 175),
+            Color.rgb(42, 109, 130)
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_info);
         group = (Group) getIntent().getSerializableExtra("group");
         groupMembers = group.getMembers();
-        TextView totalGroupExpenseView = (TextView) findViewById(R.id.textView4);
-        TextView totalUserExpenseView = (TextView) findViewById(R.id.textView5);
-        totalGroupExpenseView.setText("Group Total: $" + String.format("%.02f",totalExpenses(group.getExpenses())));
         ListView listView = (ListView) findViewById(R.id.friendsList);
         List<User> otherUsers;
 
-        addColorsToList();
         //find the object for the user who is logged in
         User localUser = null;
         for(User user : groupMembers) {
@@ -64,13 +95,15 @@ public class GroupInfoActivity extends AppCompatActivity {
                 debts = new ArrayList<>();
             }
         }
-        EmbossMaskFilter emf = new EmbossMaskFilter(
-                new float[]{1, 1, 1}, 0.4f, 10, 8.2f);
-        pieChart = (PieChart) findViewById(R.id.pieChart);
-        pieChart.getLegend().setVisible(false);
-        createSegments();
-        pieChart.getBorderPaint().setColor(Color.TRANSPARENT);
 
+        pieChart = (PieChart) findViewById(R.id.pieChart);
+        pieChart.getLegend().setEnabled(false);
+        createSegments();
+        pieChart.animateY(1200, Easing.EasingOption.EaseInOutQuad);
+        pieChart.setDragDecelerationFrictionCoef(.98f);
+        Description description = new Description();
+        description.setEnabled(false);
+        pieChart.setDescription(description);
 
         final Spinner spinner = (Spinner) findViewById(R.id.groupMembersSpinner);
         adapterTwo = new ArrayAdapter<User>(this, android.R.layout.activity_list_item, android.R.id.text1, groupMembers) {
@@ -102,21 +135,10 @@ public class GroupInfoActivity extends AppCompatActivity {
         };
         spinner.setAdapter(adapterTwo);
 
-        //get the list of debts that this user owes
-
-        //if(localUser != null) {
-        //    debts = group.getDebtsForUser(localUser);
-
-        //}else{
-           // debts = new ArrayList<>();
-        //}
-        totalUserExpenseView.setText("Your Expenses: $" + String.format("%.02f", group.getTotalExpenseForUser(group.getMembers().get(spinner.getSelectedItemPosition()))));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                TextView totalUserExpenseView = (TextView) findViewById(R.id.textView5);
                 debts = group.getDebtsForUser(groupMembers.get(i));
-                totalUserExpenseView.setText("Your Expenses: $" + String.format("%.02f", group.getTotalExpenseForUser(group.getMembers().get(spinner.getSelectedItemPosition()))));
                 adapter.notifyDataSetChanged();
             }
 
@@ -185,17 +207,33 @@ public class GroupInfoActivity extends AppCompatActivity {
         return userExpenseList;
     }
 
-    public List<Segment> createSegments(){
-        List<Segment> segmentList = new ArrayList<>();
+    public void createSegments(){
+        List<PieEntry> entries = new ArrayList<>();
         for(int i = 0; i < groupMembers.size(); i++){
-            Segment segment = new Segment(groupMembers.get(i).getName(), group.getTotalExpenseForUser(group.getMembers().get(i)));
-            SegmentFormatter formatter = new SegmentFormatter(colorList.get(i));
-            //formatter.getRadialEdgePaint().setColor(Color.TRANSPARENT);
-            //formatter.setRadialInset(10);
-            formatter.getLabelPaint().setColor(Color.BLACK);
-            pieChart.addSegment(segment, formatter);
+            String name = (groupMembers.get(i).getName());
+            Double value = group.getTotalExpenseForUser(group.getMembers().get(i));
+            PieEntry entry = new PieEntry(Double.valueOf(value).floatValue(), name);
+            //entry.setLabel(generateSegmentSpannableText(name, String.format("%.02f", value)).toString());
+            entries.add(entry);
         }
-        return segmentList;
+        PieDataSet set = new PieDataSet(entries, "Expenses");
+        set.setValueTextSize(10f);
+
+        IValueFormatter formatter = new IValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return String.format("$%.02f", value);
+            }
+
+        };
+        set.setValueFormatter(formatter);
+        set.setColors(COLORS);
+        PieData data = new PieData(set);
+        pieChart.setCenterText(generateCenterSpannableText());
+        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.setUsePercentValues(false);
+        pieChart.setData(data);
+        pieChart.invalidate();
     }
 
     public double totalExpenses(List<Expense> expenses){
@@ -205,42 +243,16 @@ public class GroupInfoActivity extends AppCompatActivity {
         }
         return total;
     }
-    public void addColorsToList(){
-        colorList.add(Color.rgb(255,0,0));
-        colorList.add(Color.rgb(55,156,0));
-        colorList.add(Color.rgb(238,255,0));
-        colorList.add(Color.rgb(30,255,0));
-        colorList.add(Color.rgb(0,190,255));
-        colorList.add(Color.rgb(73,198,229));
-        colorList.add(Color.rgb(0,189,157));
 
-    }
+    private SpannableString generateCenterSpannableText() {
 
-    public void startUpAnimation(){
-        final PieRenderer pieRenderer = pieChart.getRenderer(PieRenderer.class);
-        pieRenderer.setExtentDegs(0);
-        pieRenderer.setDonutSize(0.5f, PieRenderer.DonutMode.PERCENT);
-
-        ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
-
-        animator.setInterpolator(new AccelerateDecelerateInterpolator());
-
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float scale = valueAnimator.getAnimatedFraction();
-                pieRenderer.setExtentDegs(360 * scale);
-                pieChart.redraw();
-            }
-        });
-
-        animator.setDuration(1500);
-        animator.start();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        startUpAnimation();
+        SpannableString s = new SpannableString("Group Total\n$ "+ String.format("%.02f",totalExpenses(group.getExpenses())));
+        s.setSpan(new RelativeSizeSpan(1.7f), 0, 11, 0);
+        s.setSpan(new StyleSpan(Typeface.NORMAL), 0, 11, 0);
+        s.setSpan(new ForegroundColorSpan(Color.GRAY), 0, 11, 0);
+        s.setSpan(new RelativeSizeSpan(1f), 11, s.length(), 0);
+        s.setSpan(new StyleSpan(Typeface.ITALIC), 11, s.length(), 0);
+        s.setSpan(new ForegroundColorSpan(Color.RED), 11, s.length(), 0);
+        return s;
     }
 }
