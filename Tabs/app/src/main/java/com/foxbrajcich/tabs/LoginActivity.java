@@ -177,16 +177,7 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         final DatabaseReference childRef = mFirebaseDatabase.getReference("users").child(username);
-        childRef.addValueEventListener(newListener);
-
-        new Handler().postDelayed(new Runnable(){
-            @Override
-            public void run() {
-                childRef.removeEventListener(newListener);
-                attemptingLogin = false;
-                showProgress(false);
-            }
-        }, 15000);
+        childRef.addListenerForSingleValueEvent(newListener);
 
     }
 
@@ -200,9 +191,9 @@ public class LoginActivity extends AppCompatActivity {
         final String username = mUsernameView.getText().toString();
         final String name = ((EditText) findViewById(R.id.nameTextView)).getText().toString();
 
-        showProgress(true);
+        final DatabaseReference childRef = mFirebaseDatabase.getReference("users").child(username);
 
-        Handler timeoutEvent = new Handler();
+        showProgress(true);
 
         final ValueEventListener newListener = new ValueEventListener() {
             @Override
@@ -234,17 +225,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        final DatabaseReference childRef = mFirebaseDatabase.getReference("users").child(username);
-        childRef.addValueEventListener(newListener);
-
-        new Handler().postDelayed(new Runnable(){
-            @Override
-            public void run() {
-                childRef.removeEventListener(newListener);
-                attemptingRegister = false;
-                showProgress(false);
-            }
-        }, 15000);
+        childRef.addListenerForSingleValueEvent(newListener);
 
     }
 
