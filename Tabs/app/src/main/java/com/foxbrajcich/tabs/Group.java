@@ -32,8 +32,6 @@ public class Group implements Serializable{
 
     public void setGroupIconId(int groupIconId) { this.groupIconId = groupIconId; }
 
-    public int getGroupIconId() { return groupIconId; }
-
     public void setGroupTitle(String groupTitle) {
         this.groupTitle = groupTitle;
     }
@@ -48,6 +46,10 @@ public class Group implements Serializable{
 
     public void setGroupId(int groupId) {
         this.groupId = groupId;
+    }
+
+    public int getGroupIconId() {
+        return groupIconId;
     }
 
     public void setMembers(List<User> members) {

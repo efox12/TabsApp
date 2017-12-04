@@ -10,7 +10,6 @@ import java.util.List;
 public class User implements Serializable{
     private String name;
     private String username;
-    private int userId;
     private List<User> friends;
     private boolean isOnline;
 
