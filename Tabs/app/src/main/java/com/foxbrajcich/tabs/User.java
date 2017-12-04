@@ -10,13 +10,17 @@ import java.util.List;
 public class User implements Serializable{
     private String name;
     private String username;
-    private List<User> friends;
     private boolean isOnline;
 
     public User(){}
 
     public User(String name){
         this.name = name;
+    }
+
+    public User(String name, String username){
+        this.name = name;
+        this.username = username;
     }
 
     public String getName() {
@@ -27,4 +31,11 @@ public class User implements Serializable{
         this.name = name;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

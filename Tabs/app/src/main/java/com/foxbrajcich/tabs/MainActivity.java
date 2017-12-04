@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity
     LocalDatabaseHelper dbHelper;
 
     List<Group> groupList;
-    List<User> friendList = new ArrayList<>();
+    List<User> friendList;
     List<Transaction> transactionList = new ArrayList<>();
 
     final static int REQUEST_CODE = 1;
@@ -64,6 +64,11 @@ public class MainActivity extends AppCompatActivity
         //populate the list of groups from the local database
         dbHelper = LocalDatabaseHelper.getInstance(this);
         groupList = dbHelper.getAllOfflineGroups();
+
+        friendList = new ArrayList<>();
+        for(String s : UserSession.getFriendsUsernames()){
+            friendList.add(new User(s, s));
+        }
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -287,4 +292,5 @@ public class MainActivity extends AppCompatActivity
             return null;
         }
     }
+
 }

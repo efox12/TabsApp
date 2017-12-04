@@ -160,16 +160,15 @@ public class MainActivityFragment extends ListFragment{
                 rootView.findViewById(R.id.noFriendsText).setVisibility(View.GONE);
                 rootView.findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
             }
-                friendsAdapter = new ArrayAdapter<User>(super.getContext(), android.R.layout.simple_list_item_2, android.R.id.text1, friends) {
+                friendsAdapter = new ArrayAdapter<User>(super.getContext(), android.R.layout.simple_list_item_1, friends) {
                     @NonNull
                     @Override
                     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                         View view = super.getView(position, convertView, parent);
 
                         TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
-                        TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
-                        textView1.setText(friends.get(position).getName());
-                        textView2.setText("Friend " + position);
+                        //TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
+                        textView1.setText(friends.get(position).getUsername());
                         return view;
                     }
                 };
