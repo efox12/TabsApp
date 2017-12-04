@@ -1,6 +1,9 @@
 package com.foxbrajcich.tabs;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.EmbossMaskFilter;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +12,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -16,8 +20,16 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.androidplot.pie.PieChart;
+import com.androidplot.pie.PieRenderer;
+import com.androidplot.pie.Segment;
+import com.androidplot.pie.SegmentFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.foxbrajcich.tabs.R.id.pieChart;
+import static com.foxbrajcich.tabs.R.id.spinner;
 
 public class GroupInfoActivity extends AppCompatActivity {
 
@@ -25,7 +37,9 @@ public class GroupInfoActivity extends AppCompatActivity {
     ArrayAdapter<User> adapterTwo;
     List<Debt> debts;
     List<User> groupMembers = new ArrayList<>();
+    List<Integer> colorList = new ArrayList<>();
     Group group;
+    PieChart pieChart;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +52,7 @@ public class GroupInfoActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.friendsList);
         List<User> otherUsers;
 
+        addColorsToList();
         //find the object for the user who is logged in
         User localUser = null;
         for(User user : groupMembers) {
@@ -49,6 +64,13 @@ public class GroupInfoActivity extends AppCompatActivity {
                 debts = new ArrayList<>();
             }
         }
+        EmbossMaskFilter emf = new EmbossMaskFilter(
+                new float[]{1, 1, 1}, 0.4f, 10, 8.2f);
+        pieChart = (PieChart) findViewById(R.id.pieChart);
+        pieChart.getLegend().setVisible(false);
+        createSegments();
+        pieChart.getBorderPaint().setColor(Color.TRANSPARENT);
+
 
         final Spinner spinner = (Spinner) findViewById(R.id.groupMembersSpinner);
         adapterTwo = new ArrayAdapter<User>(this, android.R.layout.activity_list_item, android.R.id.text1, groupMembers) {
@@ -163,11 +185,62 @@ public class GroupInfoActivity extends AppCompatActivity {
         return userExpenseList;
     }
 
+    public List<Segment> createSegments(){
+        List<Segment> segmentList = new ArrayList<>();
+        for(int i = 0; i < groupMembers.size(); i++){
+            Segment segment = new Segment(groupMembers.get(i).getName(), group.getTotalExpenseForUser(group.getMembers().get(i)));
+            SegmentFormatter formatter = new SegmentFormatter(colorList.get(i));
+            //formatter.getRadialEdgePaint().setColor(Color.TRANSPARENT);
+            //formatter.setRadialInset(10);
+            formatter.getLabelPaint().setColor(Color.BLACK);
+            pieChart.addSegment(segment, formatter);
+        }
+        return segmentList;
+    }
+
     public double totalExpenses(List<Expense> expenses){
         double total = 0;
         for(int i = 0; i < expenses.size(); i++){
            total += expenses.get(i).getAmount();
         }
         return total;
+    }
+    public void addColorsToList(){
+        colorList.add(Color.rgb(255,0,0));
+        colorList.add(Color.rgb(55,156,0));
+        colorList.add(Color.rgb(238,255,0));
+        colorList.add(Color.rgb(30,255,0));
+        colorList.add(Color.rgb(0,190,255));
+        colorList.add(Color.rgb(73,198,229));
+        colorList.add(Color.rgb(0,189,157));
+
+    }
+
+    public void startUpAnimation(){
+        final PieRenderer pieRenderer = pieChart.getRenderer(PieRenderer.class);
+        pieRenderer.setExtentDegs(0);
+        pieRenderer.setDonutSize(0.5f, PieRenderer.DonutMode.PERCENT);
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float scale = valueAnimator.getAnimatedFraction();
+                pieRenderer.setExtentDegs(360 * scale);
+                pieChart.redraw();
+            }
+        });
+
+        animator.setDuration(1500);
+        animator.start();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startUpAnimation();
     }
 }
