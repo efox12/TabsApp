@@ -8,6 +8,23 @@
     android:columnCount="2"
     tools:context="com.foxbrajcich.tabs.GroupInfoActivity">
 
+    <Spinner
+        android:id="@+id/groupMembersSpinner"
+        android:layout_margin="10dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_columnSpan="2">
+    </Spinner>
+    <com.androidplot.pie.PieChart
+        style="@style/APDefacto.Light"
+        android:id="@+id/pieChart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_columnWeight="1"
+        android:layout_rowWeight="10"
+        android:layout_columnSpan="2"/>
     <TextView
         android:id="@+id/textView4"
         android:layout_width="0dp"
@@ -38,6 +55,7 @@
         android:layout_columnWeight="2"
         android:layout_rowWeight="1"
         android:text="Amount you owe: " />
+
     <ListView
         android:id="@+id/friendsList"
         android:layout_width="0dp"
