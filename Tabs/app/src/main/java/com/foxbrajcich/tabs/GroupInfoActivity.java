@@ -1,6 +1,7 @@
 package com.foxbrajcich.tabs;
 
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -8,9 +9,11 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,6 +22,8 @@ import java.util.List;
 public class GroupInfoActivity extends AppCompatActivity {
 
     ArrayAdapter<Debt> adapter;
+    ArrayAdapter<User> adapterTwo;
+    List<Debt> debts;
     List<User> groupMembers = new ArrayList<>();
     Group group;
     @Override
@@ -27,28 +32,77 @@ public class GroupInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_info);
         group = (Group) getIntent().getSerializableExtra("group");
         groupMembers = group.getMembers();
-        TextView totalGroupExpenseView =(TextView) findViewById(R.id.textView4);
+        TextView totalGroupExpenseView = (TextView) findViewById(R.id.textView4);
         TextView totalUserExpenseView = (TextView) findViewById(R.id.textView5);
         totalGroupExpenseView.setText("Group Total: $" + String.format("%.02f",totalExpenses(group.getExpenses())));
         ListView listView = (ListView) findViewById(R.id.friendsList);
+        List<User> otherUsers;
 
         //find the object for the user who is logged in
         User localUser = null;
         for(User user : groupMembers) {
             if(user.getName().equals(UserSession.getName())){
                 localUser = user;
+                debts = group.getDebtsForUser(localUser);
                 break;
+            }else {
+                debts = new ArrayList<>();
             }
         }
 
+        final Spinner spinner = (Spinner) findViewById(R.id.groupMembersSpinner);
+        adapterTwo = new ArrayAdapter<User>(this, android.R.layout.activity_list_item, android.R.id.text1, groupMembers) {
+            @NonNull
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+
+                ImageView textView1 = (ImageView) view.findViewById(android.R.id.icon);
+                TextView textView2 = (TextView) view.findViewById(android.R.id.text1);
+                textView1.setImageResource(R.drawable.user);
+                textView2.setText(groupMembers.get(position).getName());
+                return view;
+            }
+
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+
+                ImageView textView1 = (ImageView) view.findViewById(android.R.id.icon);
+                TextView textView2 = (TextView) view.findViewById(android.R.id.text1);
+                textView1.setImageResource(R.drawable.user);
+                textView2.setText(groupMembers.get(position).getName());
+                return view;
+            }
+
+
+        };
+        spinner.setAdapter(adapterTwo);
+
         //get the list of debts that this user owes
-        final List<Debt> debts;
-        if(localUser != null) {
-            debts = group.getDebtsForUser(localUser);
-            totalUserExpenseView.setText("Your Expenses: $" + String.format("%.02f", group.getTotalExpenseForUser(localUser)));
-        }else{
-            debts = new ArrayList<>();
-        }
+
+        //if(localUser != null) {
+        //    debts = group.getDebtsForUser(localUser);
+
+        //}else{
+           // debts = new ArrayList<>();
+        //}
+        totalUserExpenseView.setText("Your Expenses: $" + String.format("%.02f", group.getTotalExpenseForUser(group.getMembers().get(spinner.getSelectedItemPosition()))));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                TextView totalUserExpenseView = (TextView) findViewById(R.id.textView5);
+                debts = group.getDebtsForUser(groupMembers.get(i));
+                totalUserExpenseView.setText("Your Expenses: $" + String.format("%.02f", group.getTotalExpenseForUser(group.getMembers().get(spinner.getSelectedItemPosition()))));
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         adapter = new ArrayAdapter<Debt>(this, R.layout.expense_list_layout, R.id.nameTextView, debts){
             @NonNull
