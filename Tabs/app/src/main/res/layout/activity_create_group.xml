@@ -13,7 +13,9 @@
         android:id="@+id/titleEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Group Title" />
+        android:hint="Enter Group Title"
+        android:inputType="text"
+        android:maxLines="1" />
 
     <Switch
         android:id="@+id/switch1"

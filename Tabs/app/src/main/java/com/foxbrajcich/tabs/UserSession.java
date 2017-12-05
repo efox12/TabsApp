@@ -13,11 +13,11 @@ public class UserSession {
 
     private static String username;
     private static String name;
-    private static List<String> friendsUsernames;
+    private static List<User> friends;
     private static List<Group> groupsList;
 
     static {
-        friendsUsernames = new ArrayList<>();
+        friends = new ArrayList<>();
         groupsList = new ArrayList<>();
     }
 
@@ -26,7 +26,7 @@ public class UserSession {
     public static void clearUserSession(){
         username = null;
         name = null;
-        friendsUsernames = new ArrayList<>();
+        friends = new ArrayList<>();
         groupsList = new ArrayList<>();
     }
 
@@ -42,12 +42,12 @@ public class UserSession {
         return username;
     }
 
-    public static List<String> getFriendsUsernames(){
-        return friendsUsernames;
+    public static List<User> getFriends(){
+        return friends;
     }
 
-    public static void addFriendsUsername(String username){
-        friendsUsernames.add(username);
+    public static void addFriend(User friend){
+        friends.add(friend);
     }
 
     public static List<Group> getGroupsList() { return groupsList; }

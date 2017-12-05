@@ -25,7 +25,7 @@
         android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="All Friends"/>
+        android:text="Suggestions"/>
 
     <ListView
         android:id="@+id/friendsList"

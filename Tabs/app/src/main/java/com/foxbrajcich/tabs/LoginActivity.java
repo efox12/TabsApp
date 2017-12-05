@@ -311,7 +311,7 @@ public class LoginActivity extends AppCompatActivity {
             Map<String, Object> usernames = (Map<String, Object>) dataSnapshot.getValue();
 
             for(String randomId : usernames.keySet()){
-                UserSession.addFriendsUsername((String) usernames.get(randomId));
+                UserSession.addFriend(new User("", (String) usernames.get(randomId)));
             }
 
             friendsListLoaded = true;

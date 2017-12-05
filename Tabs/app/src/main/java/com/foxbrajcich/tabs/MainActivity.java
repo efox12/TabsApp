@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     LocalDatabaseHelper dbHelper;
     List<Group> groupList;
-    List<User> friendList;
     ArrayAdapter<Group> groupsAdapter;
 
     final static int NEW_REQUEST_CODE = 1;
@@ -46,11 +45,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //populate the list of groups from the local database
         dbHelper = LocalDatabaseHelper.getInstance(this);
         groupList = dbHelper.getAllOfflineGroups();
-
-        friendList = new ArrayList<>();
-        for(String s : UserSession.getFriendsUsernames()){
-            friendList.add(new User(s, s));
-        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

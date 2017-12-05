@@ -38,4 +38,12 @@ public class User implements Serializable{
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
+    }
 }

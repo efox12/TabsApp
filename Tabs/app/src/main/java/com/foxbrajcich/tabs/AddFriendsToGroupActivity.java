@@ -32,15 +32,27 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
     List<String> groupMemberNames = new ArrayList<>();
     Group group;
 
+    User offlineUserEntry;
+
+    TextView addedUsersView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friends_to_group);
+
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Add friends");
+        actionBar.setTitle("Add Group Members");
+
+        offlineUserEntry = new User();
+        offlineUserEntry.setUsername("Add as Offline User");
+        offlineUserEntry.setOnline(false);
+
         group = (Group) getIntent().getSerializableExtra("group");
         ListView listView = (ListView) findViewById(R.id.friendsList);
+        addedUsersView = findViewById(R.id.groupMembers);
+
         adapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_2, android.R.id.text1, users){
             @NonNull
             @Override
@@ -50,10 +62,11 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
                 TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
                 TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
                 textView1.setText(users.get(position).getName());
-                textView2.setText("Friend");
+                textView2.setText(users.get(position).getUsername());
                 return view;
             }
         };
+
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -63,8 +76,9 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         User homeUser = new User(UserSession.getName());
         groupMembers.add(homeUser);
         group.setMembers(groupMembers);
-        groupMemberNames.add(0, homeUser.getName());
-        textView.setText("Members: " + groupMemberNames.toString());
+        addUsersNameToList(homeUser.getName());
+
+
         //User offlineUser = new User();
         //offlineUser.setName("Add Offline User");
         //users.add(0, offlineUser);
@@ -72,14 +86,17 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(editText.length() > 0){
-                    User user = new User();
-                    user.setName(editText.getText().toString());
-                    groupMembers.add(user);
-                    group.setMembers(groupMembers);
-                    groupMemberNames.add(editText.getText().toString());
-                    editText.setText("");
-                    textView.setText("Members: " + groupMemberNames.toString());
+                User clickedUser = (User) adapterView.getItemAtPosition(i);
+                if(clickedUser == offlineUserEntry){
+                    if(editText.length() > 0){
+                        User user = new User();
+                        user.setName(editText.getText().toString());
+                        groupMembers.add(user);
+                        addUsersNameToList(editText.getText().toString());
+                        editText.setText("");
+                    }
+                }else{
+
                 }
             }
         });
@@ -87,7 +104,10 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                if(group.isOnline()){
+                    users.clear();
+                    users.addAll(filterFriends(s.toString()));
+                }
             }
 
             @Override
@@ -95,18 +115,15 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                User offlineUser = new User();
-                offlineUser.setName("Add Offline User");
                 if(editText.length() > 0){
-                    if(users.size() == 0 || users.get(0).getName().compareTo(offlineUser.getName()) != 0) {
-                        users.add(0, offlineUser);
-                        adapter.notifyDataSetChanged();
+                    offlineUserEntry.setName(s.toString());
+                    if(!users.contains(offlineUserEntry)) {
+                        users.add(0, offlineUserEntry);
                     }
                 } else {
-                    if(users.get(0).getName().compareTo(offlineUser.getName()) == 0)
-                    users.remove(0);
-                    adapter.notifyDataSetChanged();
+                    users.clear();
                 }
+                adapter.notifyDataSetChanged();
             }
         });
     }
@@ -149,5 +166,36 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         finishAfterTransition();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         super.onBackPressed();
+    }
+
+    private void addUsersNameToList(String usersName){
+        groupMemberNames.add(usersName);
+
+        String newText = "Members: ";
+
+        for(int i = 0; i < groupMemberNames.size(); i++){
+            if(i != 0) newText += ", ";
+            newText += groupMemberNames.get(i);
+        }
+
+        addedUsersView.setText(newText);
+
+    }
+
+    private List<User> filterFriends(String filter){
+        List<User> filteredUsers = new ArrayList<>();
+
+        if(filter.length() < 1){
+            return filteredUsers;
+        }
+
+        for(User user : UserSession.getFriends()){
+            if(user.getName().toLowerCase().startsWith(filter.toLowerCase()) ||
+                    user.getUsername().toLowerCase().startsWith(filter.toLowerCase())){
+                filteredUsers.add(user);
+            }
+        }
+
+        return filteredUsers;
     }
 }

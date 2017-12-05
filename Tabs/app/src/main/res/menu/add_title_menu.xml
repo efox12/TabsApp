@@ -3,6 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/nextViewButton"
-        android:title="SKIP"
+        android:title="NEXT"
         app:showAsAction="always" />
 </menu>

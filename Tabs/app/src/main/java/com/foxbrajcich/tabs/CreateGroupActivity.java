@@ -2,13 +2,9 @@ package com.foxbrajcich.tabs;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +18,6 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
     EditText title;
     Switch onlineSwitch;
 
-    View.OnClickListener listener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,27 +128,6 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_title_menu, menu);
         final Menu menu1 = menu;
-        menu1.getItem(0).setTitle("SKIP");
-        title.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if(title.length() > 0){
-                    menu1.getItem(0).setTitle("NEXT");
-                } else {
-                    menu1.getItem(0).setTitle("SKIP");
-                }
-            }
-        });
         return true;
     }
 
@@ -175,9 +149,11 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
             group.setGroupIconId(iconId);
             group.setOnline(!onlineSwitch.isChecked());
             group.setGroupTitle(title.getText().toString());
+
             Intent intent = new Intent(this, AddFriendsToGroupActivity.class);
             intent.putExtra("group", group);
             startActivityForResult(intent, REQUEST_CODE);
+
             overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
             return true;
         }
@@ -199,9 +175,6 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
             this.setResult(Activity.RESULT_OK, data);
             this.finish();
         }
-        //if (requestCode == REQUEST_CODE && resultCode == 100) {
-
-        //}
     }
 
     @Override

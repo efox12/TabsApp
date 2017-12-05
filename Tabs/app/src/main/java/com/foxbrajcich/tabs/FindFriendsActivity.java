@@ -73,7 +73,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                UserSession.addFriendsUsername(user.getUsername());
+                                UserSession.addFriend(new User(user.getName(), user.getUsername()));
                                 filteredUsers.remove(user);
                                 mFirebaseDatabase.getReference("users").child(UserSession.getUsername()).child("friends").push().setValue(user.getUsername());
                                 mSearchView.setText("");
@@ -163,7 +163,7 @@ public class FindFriendsActivity extends AppCompatActivity {
             Map<String, Object> users = (Map<String, Object>) dataSnapshot.getValue();
 
             for(String username : users.keySet()){
-                if(!UserSession.getUsername().equals(username) && !UserSession.getFriendsUsernames().contains(username)) {
+                if(shouldShowUser(username)) {
                     Map<String, Object> userData = (Map<String, Object>) users.get(username);
                     filteredUsers.add(new User((String) userData.get("name"), username));
                 }
@@ -176,6 +176,20 @@ public class FindFriendsActivity extends AppCompatActivity {
         public void onCancelled(DatabaseError databaseError) {
             //do nothing
         }
+    }
+
+    private boolean shouldShowUser(String username){
+        if(UserSession.getUsername().equals(username)){
+            return false;
+        }
+
+        for(User u : UserSession.getFriends()){
+            if(u.getUsername().equals(username)){
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
