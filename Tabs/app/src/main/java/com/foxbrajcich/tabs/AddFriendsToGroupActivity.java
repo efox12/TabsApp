@@ -76,7 +76,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         User homeUser = new User(UserSession.getName());
         groupMembers.add(homeUser);
         group.setMembers(groupMembers);
-        addUsersNameToList(homeUser.getName());
+        addUsersNameToList(homeUser.getName() + " (me)");
 
 
         //User offlineUser = new User();
@@ -96,7 +96,9 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
                         editText.setText("");
                     }
                 }else{
-
+                    groupMembers.add(clickedUser);
+                    addUsersNameToList(clickedUser.getName() + " (" + clickedUser.getUsername() + ")");
+                    editText.setText("");
                 }
             }
         });
@@ -117,7 +119,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 if(editText.length() > 0){
                     offlineUserEntry.setName(s.toString());
-                    if(!users.contains(offlineUserEntry)) {
+                    if(!users.contains(offlineUserEntry) && !userAlreadyAdded(offlineUserEntry)) {
                         users.add(0, offlineUserEntry);
                     }
                 } else {
@@ -190,12 +192,28 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         }
 
         for(User user : UserSession.getFriends()){
-            if(user.getName().toLowerCase().startsWith(filter.toLowerCase()) ||
-                    user.getUsername().toLowerCase().startsWith(filter.toLowerCase())){
-                filteredUsers.add(user);
+            if(!userAlreadyAdded(user)) {
+                if (user.getName().toLowerCase().startsWith(filter.toLowerCase()) ||
+                        user.getUsername().toLowerCase().startsWith(filter.toLowerCase())) {
+                    filteredUsers.add(user);
+                }
             }
         }
 
         return filteredUsers;
+    }
+
+    private boolean userAlreadyAdded(User u){
+        for(User user : groupMembers){
+            if(user.getName().equals(u.getName())){
+                return true;
+            }
+
+            if(!user.getUsername().equals("") && user.getUsername().equals(u.getUsername())){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -12,10 +12,14 @@ public class User implements Serializable{
     private String username;
     private boolean isOnline;
 
-    public User(){}
+    public User(){
+        this.name = "";
+        this.username = "";
+    }
 
     public User(String name){
         this.name = name;
+        this.username = "";
     }
 
     public User(String name, String username){
