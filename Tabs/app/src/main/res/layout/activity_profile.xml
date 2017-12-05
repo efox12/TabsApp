@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background"
+    android:padding="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,20 +11,41 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_gravity="center"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        android:paddingBottom="10dp"
+        app:srcCompat="@drawable/user" />
 
     <TextView
         android:id="@+id/textView"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="30sp"
         android:text="NAME" />
 
     <TextView
         android:id="@+id/textView4"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:paddingBottom="2dp"
         android:text="USERNAME" />
+
+    <TextView
+        android:id="@+id/editProfileButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Edit Profile"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="10sp" />
+
+    <ListView
+        android:id="@+id/activityList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
