@@ -1,27 +1,37 @@
 package com.foxbrajcich.tabs;
 
 import android.animation.ValueAnimator;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -48,9 +58,11 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.time.format.DecimalStyle;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.string.yes;
 import static com.foxbrajcich.tabs.R.id.spinner;
 import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 
@@ -60,7 +72,6 @@ public class GroupInfoActivity extends AppCompatActivity {
     ArrayAdapter<User> adapterTwo;
     List<Debt> debts;
     List<User> groupMembers = new ArrayList<>();
-    List<Integer> colorList = new ArrayList<>();
     Group group;
     PieChart pieChart;
 
@@ -173,6 +184,70 @@ public class GroupInfoActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                final int position = i;
+                final String amount = String.format("%.02f", debts.get(position).getAmount());
+
+                LinearLayout linearLayout = new LinearLayout(GroupInfoActivity.this);
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
+                linearLayout.setPadding(10, 10, 10, 10);
+
+                CheckBox checkBox = new CheckBox(GroupInfoActivity.this);
+                checkBox.setText("Pay in full");
+                checkBox.setChecked(false);
+
+                final EditText editText = new EditText(GroupInfoActivity.this);
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                editText.setHint("$0.00");
+                editText.setGravity(Gravity.RIGHT);
+                linearLayout.addView(checkBox);
+                linearLayout.addView(editText);
+
+                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(compoundButton.isChecked()) {
+                            editText.setText(amount);
+                        }
+                        else {
+                            editText.setText("");
+                        }
+                    }
+                });
+
+                if(checkBox.isChecked()) {
+                    editText.setText(String.format("%.02f", debts.get(i).getAmount()));
+                }
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(GroupInfoActivity.this);
+                alertDialog.setTitle("Pay Person")
+                        .setView(linearLayout)
+                        .setPositiveButton(("yes"), new DialogInterface.OnClickListener(){
+                            // delete the note if clicked
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int j) {
+                                Transaction transaction = new Transaction();
+                                transaction.setAmount(Double.valueOf(editText.getText().toString()));
+                                transaction.setSendingUsersName(groupMembers.get(spinner.getSelectedItemPosition()).getName());
+                                transaction.setReceivingUsername(debts.get(position).getDebtor().getName());
+                                List<Transaction> transactionList = group.getTransactions();
+                                transactionList.add(transaction);
+                                group.setTransactions(transactionList);
+                                debts = group.getDebtsForUser(groupMembers.get(spinner.getSelectedItemPosition()));
+                            }
+                        })
+                        .setNegativeButton(("Cancel"),
+                                new DialogInterface.OnClickListener(){
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int j) {
+
+                                    }
+                                });
+                alertDialog.show();
+            }
+        });
     }
 
     @Override
