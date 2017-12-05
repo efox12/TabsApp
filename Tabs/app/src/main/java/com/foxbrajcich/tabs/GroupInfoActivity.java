@@ -230,8 +230,8 @@ public class GroupInfoActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialogInterface, int j) {
                                 Transaction transaction = new Transaction();
                                 transaction.setAmount(Double.valueOf(editText.getText().toString()));
-                                transaction.setSendingUserName(groupMembers.get(spinner.getSelectedItemPosition()).getUsername());
-                                transaction.setReceivingUserName(debts.get(position).getDebtor().getUsername());
+                                transaction.setSendingUsersName(groupMembers.get(spinner.getSelectedItemPosition()).getUsername());
+                                transaction.setReceivingUsername(debts.get(position).getDebtor().getUsername());
                                 List<Transaction> transactionList = group.getTransactions();
                                 transactionList.add(transaction);
                                 group.setTransactions(transactionList);
