@@ -34,6 +34,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
     static final String AMOUNT = "amount";
     static final String FROM_USER = "fromUser";
     static final String TO_USER = "toUser";
+    static final String GROUP_ICON_ID = "groupIconId";
 
     public static LocalDatabaseHelper getInstance(Context context){
         if(mInstance == null){
@@ -54,7 +55,8 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         String createGroupTable =
                 "CREATE TABLE " + TABLE_GROUPS + "(" +
                         ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        NAME + " TEXT)";
+                        NAME + " TEXT, " +
+                        GROUP_ICON_ID + " INTEGER)";
 
         db.execSQL(createGroupTable);
 
@@ -151,9 +153,12 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         while(cursor.moveToNext()){
             int groupId = cursor.getInt(0);
             String groupName = cursor.getString(1);
+            int groupIconId = cursor.getInt(2);
 
             Group newGroup = new Group(groupName, String.valueOf(groupId), getGroupMembersById(groupId),
                     getGroupExpensesById(groupId), getGroupTransactionsById(groupId), false);
+
+            newGroup.setGroupIconId(groupIconId);
 
             groups.add(newGroup);
         }
@@ -206,7 +211,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
     public void addGroupToDatabase(Group group){
 
-        String addGroupSql = "INSERT INTO " + TABLE_GROUPS + " VALUES(null, '" + group.getGroupTitle() + "')";
+        String addGroupSql = "INSERT INTO " + TABLE_GROUPS + " VALUES(null, '" + group.getGroupTitle() + "', " + group.getGroupIconId() + ")";
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(addGroupSql);
