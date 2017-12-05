@@ -286,7 +286,7 @@ public class LoginActivity extends AppCompatActivity {
         editor.commit();
 
         mFirebaseDatabase.getReference("users").child(username).child("friends").addListenerForSingleValueEvent(new FriendsListLoader());
-        mFirebaseDatabase.getReference("Groups").addListenerForSingleValueEvent(new GroupsListLoader());
+        mFirebaseDatabase.getReference("groups").addListenerForSingleValueEvent(new GroupsListLoader());
     }
 
     private void databaseQueriedCallback(){
@@ -342,6 +342,11 @@ public class LoginActivity extends AppCompatActivity {
                 Map<String, Object> groupInfo = (Map<String, Object>) groups.get(groupId);
                 String groupName = (String) groupInfo.get("name");
 
+                int groupIconId = 0;
+                if(groupInfo.containsKey("groupIcon")){
+                    groupIconId = ((java.lang.Number) groupInfo.get("groupIcon")).intValue();
+                }
+
                 Map<String, Object> expenses = (Map<String, Object>) groupInfo.get("expenses");
                 Map<String, Object> members = (Map<String, Object>) groupInfo.get("members");
                 Map<String, Object> transactions = (Map<String, Object>) groupInfo.get("transactions");
@@ -361,13 +366,27 @@ public class LoginActivity extends AppCompatActivity {
                         expenseList.add(new Expense(content, username, amount));
                     }
                 }
+
+                boolean containsThisUser = false;
+
                 if(members != null && members.size() > 0) {
                     for (String memberId : members.keySet()) {
-                        String username = (String) members.get(memberId);
-                        User newUser = new User("", username);
+                        Map<String, Object> member = (Map<String, Object>) members.get(memberId);
+
+                        String username = (String) member.get("username");
+                        String name = (String) member.get("name");
+
+                        if(username.toLowerCase().equals(UserSession.getUsername()))
+                            containsThisUser = true;
+
+                        User newUser = new User(name, username);
                         UserDataFetcher.registerUserToPopulate(newUser);
                         memberList.add(newUser);
                     }
+                }
+
+                if(!containsThisUser){
+                    continue;
                 }
 
                 if(transactions != null && transactions.size() > 0) {
@@ -390,7 +409,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
 
-                UserSession.addGroup(new Group(groupName, groupId, memberList, expenseList, transactionList, true));
+                Group groupToAdd = new Group(groupName, groupId, memberList, expenseList, transactionList, true);
+                groupToAdd.setGroupIconId(groupIconId);
+                UserSession.addGroup(groupToAdd);
 
             }
 

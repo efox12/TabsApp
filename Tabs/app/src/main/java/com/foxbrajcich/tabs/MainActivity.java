@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,8 +24,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -45,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //populate the list of groups from the local database
         dbHelper = LocalDatabaseHelper.getInstance(this);
         groupList = dbHelper.getAllOfflineGroups();
+        groupList.addAll(UserSession.getGroupsList());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 TextView textView = (TextView) view.findViewById(R.id.groupTextView);
                 TextView textView1 = (TextView) view.findViewById(R.id.groupTextView2);
                 textView.setText(groupList.get(position).getGroupTitle());
-                textView1.setText("Group");
+                textView1.setText(groupsAdapter.getItem(position).isOnline() ? "Online Group" : "Offline Group");
                 imageView.setImageResource(getImage(groupList.get(position).getGroupIconId()));
                 return view;
             }
@@ -183,8 +190,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (requestCode == NEW_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if(data.hasExtra("group")) {
                 Group group = (Group) data.getSerializableExtra("group");
-                if(!group.isOnline()) dbHelper.addGroupToDatabase(group); //if it's an offline group add it to the local db
+                if(!group.isOnline()) dbHelper.addGroupToDatabase(group); //if it's an offline group add it to the local
+                else createGroupInFirebase(group);
                 groupList.add(group);
+
+                //hide the sad face if it's showing
+                findViewById(R.id.noFriendsText).setVisibility(View.GONE);
+                findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
 
                 //open newly added group in GroupActivity
                 Intent intent = new Intent(this, GroupActivity.class);
@@ -194,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         }
+
         if (requestCode == EXISTING_GROUP_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if(data.hasExtra("group")) {
                 Group group = (Group) data.getSerializableExtra("group");
@@ -229,6 +242,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             return R.drawable.user;
         }
+    }
+
+    private void createGroupInFirebase(Group group){
+        DatabaseReference dbGroups = FirebaseDatabase.getInstance().getReference("groups");
+        DatabaseReference groupRef = dbGroups.push();
+        group.setGroupId(groupRef.getKey());
+
+        Map<String, Object> groupData = new HashMap<>();
+
+        groupData.put("name", group.getGroupTitle());
+        groupData.put("groupIcon", group.getGroupIconId());
+
+        Map<String, Object> memberHash = new HashMap<>();
+
+        for(User user : group.getMembers()){
+            DatabaseReference memberRef = groupRef.child("members").push();
+            Map<String, Object> memberInfo = new HashMap<>();
+            memberInfo.put("name", user.getName());
+            memberInfo.put("username", user.getUsername());
+            memberHash.put(memberRef.getKey(), memberInfo);
+        }
+
+        groupData.put("members", memberHash);
+
+        groupRef.setValue(groupData);
+
     }
 
 }

@@ -73,7 +73,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         final EditText editText = (EditText) findViewById(R.id.addFriendsEditText);
         final TextView textView = (TextView) findViewById(R.id.groupMembers);
 
-        User homeUser = new User(UserSession.getName());
+        User homeUser = new User(UserSession.getName(), UserSession.getUsername());
         groupMembers.add(homeUser);
         group.setMembers(groupMembers);
         addUsersNameToList(homeUser.getName() + " (me)");
