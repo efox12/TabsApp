@@ -4,12 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,40 +16,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        MainActivityFragment.OnSectionSelected,
-        MainActivityFragment.OnGetList {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     LocalDatabaseHelper dbHelper;
-
     List<Group> groupList;
     List<User> friendList;
-    List<Transaction> transactionList = new ArrayList<>();
+    ArrayAdapter<Group> groupsAdapter;
 
-    final static int REQUEST_CODE = 1;
-    final static int NEW_REQUEST_CODE = 2;
-    final static int EXISTING_GROUP_REQUEST_CODE = 3;
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-
-    private ViewPager mViewPager;
+    final static int NEW_REQUEST_CODE = 1;
+    final static int EXISTING_GROUP_REQUEST_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,26 +52,13 @@ public class MainActivity extends AppCompatActivity
             friendList.add(new User(s, s));
         }
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        //mSectionsPagerAdapter.setUpFragments();
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(MainActivity.this, CreateGroupActivity.class);
                 startActivityForResult(intent, NEW_REQUEST_CODE);
                 overridePendingTransition(R.anim.slide_up_bottom, R.anim.fade_out);
-
             }
         });
 
@@ -104,6 +73,44 @@ public class MainActivity extends AppCompatActivity
         ((TextView) headerView.findViewById(R.id.drawerNameTextView)).setText(UserSession.getName());
         ((TextView) headerView.findViewById(R.id.drawerUsernameTextView)).setText(UserSession.getUsername());
         navigationView.setNavigationItemSelectedListener(this);
+
+        ListView listView =  (ListView) findViewById(R.id.groupList);
+        if(groupList.size() == 0){
+            TextView groupEmptyText = (TextView) findViewById(R.id.noFriendsText);
+            groupEmptyText.setText("No Groups Created");
+            findViewById(R.id.noFriendsText).setVisibility(View.VISIBLE);
+            findViewById(R.id.noFriendsSadFace).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.noFriendsText).setVisibility(View.GONE);
+            findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
+        }
+
+        groupsAdapter = new ArrayAdapter<Group>(this, R.layout.group_list_layout, R.id.groupTextView, groupList) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+
+                ImageView imageView = (ImageView) view.findViewById(R.id.groupImageView);
+                TextView textView = (TextView) view.findViewById(R.id.groupTextView);
+                TextView textView1 = (TextView) view.findViewById(R.id.groupTextView2);
+                textView.setText(groupList.get(position).getGroupTitle());
+                textView1.setText("Group");
+                imageView.setImageResource(getImage(groupList.get(position).getGroupIconId()));
+                return view;
+            }
+        };
+
+        listView.setAdapter(groupsAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MainActivity.this, GroupActivity.class);
+                intent.putExtra("group", groupList.get(i));
+                intent.putExtra("position", i);
+                startActivityForResult(intent, EXISTING_GROUP_REQUEST_CODE);
+            }
+        });
     }
 
     @Override
@@ -176,53 +183,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void updateFragment(int i){
-        List<Fragment> allFragments = getSupportFragmentManager().getFragments();
-        if (allFragments != null) {
-            for (Fragment fragment : allFragments) {
-                MainActivityFragment f1 = (MainActivityFragment) fragment;
-                if (f1.fragmentNumber == i)
-                    f1.updateGroups();
-            }
-        }
-    }
 
-    @Override
-    public List<Group> getGroupList(){
-        return groupList;
-    }
-
-    @Override
-    public List<User> getFriendList(){
-        return friendList;
-    }
-
-    @Override
-    public List<Transaction> getTransactionList(){
-        return transactionList;
-    }
-
-    @Override
-    public void onFriendSelected(int position) {
-        Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
-        intent.putExtra("friend", friendList.get(position).toString());
-        startActivityForResult(intent, REQUEST_CODE);
-    }
-
-    @Override
-    public void onGroupSelected(int position) {
-        Intent intent = new Intent(MainActivity.this, GroupActivity.class);
-        intent.putExtra("group", groupList.get(position));
-        intent.putExtra("position", position);
-        startActivityForResult(intent, EXISTING_GROUP_REQUEST_CODE);
-    }
-
-    @Override
-    public void onTransactionSelected(int position) {
-        Intent intent = new Intent(MainActivity.this, TransactionsActivity.class);
-        intent.putExtra("transaction", transactionList.get(position));
-        startActivityForResult(intent, REQUEST_CODE);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -232,7 +193,6 @@ public class MainActivity extends AppCompatActivity
                 Group group = (Group) data.getSerializableExtra("group");
                 if(!group.isOnline()) dbHelper.addGroupToDatabase(group); //if it's an offline group add it to the local db
                 groupList.add(group);
-                updateFragment(1);
 
                 //open newly added group in GroupActivity
                 Intent intent = new Intent(this, GroupActivity.class);
@@ -248,48 +208,34 @@ public class MainActivity extends AppCompatActivity
                 if(data.hasExtra("position")){
                     int position = data.getIntExtra("position", 0);
                     groupList.set(position, group);
-                    updateFragment(1);
                 }
             }
         }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            MainActivityFragment f = MainActivityFragment.newInstance(position + 1);
-            f.fragmentNumber = position;
-            return f;
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Friends";
-                case 1:
-                    return "Groups";
-                case 2:
-                    return "Transactions";
-            }
-            return null;
+    public int getImage(int i) {
+        if (i == 1) {
+            return R.drawable.basketball;
+        } else if (i == 2) {
+            return R.drawable.bee;
+        } else if (i == 3) {
+            return R.drawable.poo;
+        } else if (i == 4) {
+            return R.drawable.diamond;
+        } else if (i == 5) {
+            return R.drawable.game;
+        } else if (i == 6) {
+            return R.drawable.map;
+        } else if (i == 7) {
+            return R.drawable.gift;
+        } else if (i == 8) {
+            return R.drawable.house;
+        } else if (i == 9) {
+            return R.drawable.camping;
+        } else if (i == 10) {
+            return R.drawable.monster;
+        } else {
+            return R.drawable.user;
         }
     }
 
