@@ -1,5 +1,6 @@
 package com.foxbrajcich.tabs;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,6 +23,8 @@ public class AddExpenseActivity extends AppCompatActivity {
     Spinner spinner;
     List<User> users;
     ArrayAdapter<User> adapter;
+    EditText expenseAmount;
+    EditText expenseDescription;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +60,27 @@ public class AddExpenseActivity extends AppCompatActivity {
             }
         };
         spinner.setAdapter(adapter);
+
+        expenseAmount = (EditText) findViewById(R.id.expenseAmount);
+        expenseDescription = (EditText) findViewById(R.id.expenseDiscription);
+        expenseAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b){
+                    InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        });
+        expenseDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b){
+                    InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        });
     }
 
     @Override
@@ -67,9 +92,13 @@ public class AddExpenseActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.addExpense) {
-            EditText expenseAmount = (EditText) findViewById(R.id.expenseAmount);
-            EditText expenseDescription = (EditText) findViewById(R.id.expenseDiscription);
+
             if(expenseAmount.getText().length() > 0) {
+                InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(expenseAmount.getWindowToken(), 0);
+                InputMethodManager inputMethodManager2 =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager2.hideSoftInputFromWindow(expenseDescription.getWindowToken(), 0);
+
                 Intent intent = getIntent();
                 Expense expense = new Expense();
                 expense.setUserName(users.get(spinner.getSelectedItemPosition()).getName());
@@ -83,6 +112,10 @@ public class AddExpenseActivity extends AppCompatActivity {
             }
         }
         if(item.getItemId() == android.R.id.home){
+            InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(expenseAmount.getWindowToken(), 0);
+            InputMethodManager inputMethodManager2 =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager2.hideSoftInputFromWindow(expenseDescription.getWindowToken(), 0);
             Intent intent = getIntent();
             this.setResult(RESULT_OK, intent);
             finishAfterTransition();

@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -31,7 +33,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
     List<User> groupMembers = new ArrayList<>();
     List<String> groupMemberNames = new ArrayList<>();
     Group group;
-
+    EditText editText;
     User offlineUserEntry;
 
     TextView addedUsersView;
@@ -70,14 +72,39 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        final EditText editText = (EditText) findViewById(R.id.addFriendsEditText);
+        editText = (EditText) findViewById(R.id.addFriendsEditText);
         final TextView textView = (TextView) findViewById(R.id.groupMembers);
+
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b){
+                    InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        });
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
+            }
+        });
 
         User homeUser = new User(UserSession.getName(), UserSession.getUsername());
         groupMembers.add(homeUser);
         group.setMembers(groupMembers);
         addUsersNameToList(homeUser.getName() + " (me)");
-
 
         //User offlineUser = new User();
         //offlineUser.setName("Add Offline User");
@@ -144,6 +171,8 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if(item.getItemId() == android.R.id.home){
+            InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
             Intent intent = getIntent();
             intent.putExtra("group", group);
             this.setResult(100, intent);
@@ -153,6 +182,8 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         }
         //noinspection SimplifiableIfStatement
         if (id == R.id.nextViewButton) {
+            InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
             Intent intent = getIntent();
             intent.putExtra("group", group);
             this.setResult(RESULT_OK, intent);

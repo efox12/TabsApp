@@ -1,5 +1,6 @@
 package com.foxbrajcich.tabs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -44,9 +46,22 @@ public class FindFriendsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_friends);
-
         mSearchView = (EditText) findViewById(R.id.findFriendsSearch);
+
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
         mListView = (ListView) findViewById(R.id.findFriendsListView);
+
+        mSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b){
+                    InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        });
 
         filteredUsers = new ArrayList<>();
         arrayAdapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_2, android.R.id.text1, filteredUsers){
@@ -95,6 +110,8 @@ public class FindFriendsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home){
+            InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
             finishAfterTransition();
             overridePendingTransition(R.anim.fade_in, R.anim.slide_in_right);
         }
@@ -103,6 +120,7 @@ public class FindFriendsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        finishAfterTransition();
         overridePendingTransition(R.anim.fade_in, R.anim.slide_in_right);
         super.onBackPressed();
     }

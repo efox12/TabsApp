@@ -144,4 +144,18 @@ public class Group implements Serializable{
 
         return sum;
     }
+
+    public double getTotalContributionForUser(User user){
+        double sum = 0d;
+
+        for(Transaction transaction: transactions){
+            if(transaction.getSendingUsersName().equals(user.getName())){
+                sum += transaction.getAmount();
+            } else if(transaction.getReceivingUsersName().equals(user.getName())){
+                sum -= transaction.getAmount();
+            }
+        }
+        sum += getTotalExpenseForUser(user);
+        return sum;
+    }
 }

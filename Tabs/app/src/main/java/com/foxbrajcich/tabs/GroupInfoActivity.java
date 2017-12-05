@@ -1,6 +1,7 @@
 package com.foxbrajcich.tabs;
 
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -204,6 +206,17 @@ public class GroupInfoActivity extends AppCompatActivity {
                 editText.setGravity(Gravity.RIGHT);
                 linearLayout.addView(checkBox);
                 linearLayout.addView(editText);
+                InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View view, boolean b) {
+                        if(!b){
+                            InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+                    }
+                });
 
                 checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -211,15 +224,27 @@ public class GroupInfoActivity extends AppCompatActivity {
                         if(compoundButton.isChecked()) {
                             editText.setText(amount);
                             editText.setEnabled(false);
+                            InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                            inputMethodManager.hideSoftInputFromWindow(editText.getRootView().getWindowToken(), 0);
                         }
                         else {
                             editText.setText("");
                             editText.setEnabled(true);
+                            InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                         }
                     }
                 });
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(GroupInfoActivity.this);
+                alertDialog.setCancelable(false);
+                alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                    }
+                });
                 alertDialog.setTitle("Log Payment")
                         .setView(linearLayout)
                         .setPositiveButton(("Confirm"), new DialogInterface.OnClickListener(){
@@ -247,12 +272,24 @@ public class GroupInfoActivity extends AppCompatActivity {
 
                                 debts = group.getDebtsForUser((User) spinner.getSelectedItem());
                                 adapter.notifyDataSetChanged();
+                                InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                                inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+
+                                createSegments();
+                                pieChart.animateY(1200, Easing.EasingOption.EaseInOutQuad);
                             }
                         })
-                        .setNegativeButton("Cancel", null);
+                        .setNegativeButton(("Cancel"), new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int j) {
+                                InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+                                inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                            }
+                        });
                 alertDialog.show();
             }
         });
+
     }
 
     @Override
@@ -292,7 +329,7 @@ public class GroupInfoActivity extends AppCompatActivity {
         List<PieEntry> entries = new ArrayList<>();
         for(int i = 0; i < groupMembers.size(); i++){
             String name = (groupMembers.get(i).getName());
-            Double value = group.getTotalExpenseForUser(group.getMembers().get(i));
+            Double value = group.getTotalContributionForUser(group.getMembers().get(i));
             if(value > 0){
                 PieEntry entry = new PieEntry(Double.valueOf(value).floatValue(), name);
                 entries.add(entry);
