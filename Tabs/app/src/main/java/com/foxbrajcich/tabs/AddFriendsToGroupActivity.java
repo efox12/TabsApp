@@ -106,8 +106,8 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                users.clear();
                 if(group.isOnline()){
-                    users.clear();
                     users.addAll(filterFriends(s.toString()));
                 }
             }
@@ -205,11 +205,11 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
 
     private boolean userAlreadyAdded(User u){
         for(User user : groupMembers){
-            if(user.getName().equals(u.getName())){
+            if(user.getName().toLowerCase().equals(u.getName().toLowerCase())){
                 return true;
             }
 
-            if(!user.getUsername().equals("") && user.getUsername().equals(u.getUsername())){
+            if(!user.getUsername().equals("") && user.getUsername().toLowerCase().equals(u.getUsername().toLowerCase())){
                 return true;
             }
         }
