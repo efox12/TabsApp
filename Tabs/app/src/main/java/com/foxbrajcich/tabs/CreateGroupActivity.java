@@ -80,62 +80,112 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.icon1){
-            iconId = 1;
-            view.setAlpha(0.5f);
+            if(iconId == 1){
+                iconId = 0;
+                findViewById(R.id.icon1).setAlpha(1);
+            } else {
+                iconId = 1;
+                view.setAlpha(0.5f);
+            }
         } else {
             findViewById(R.id.icon1).setAlpha(1);
         }
         if(view.getId() == R.id.icon2){
-            iconId = 2;
-            view.setAlpha(0.5f);
+            if(iconId == 2){
+                iconId = 0;
+                findViewById(R.id.icon2).setAlpha(1);
+            } else {
+                iconId = 2;
+                view.setAlpha(0.5f);
+            }
         } else {
             findViewById(R.id.icon2).setAlpha(1);
         }
         if(view.getId() == R.id.icon3){
-            iconId =3;
-            view.setAlpha(0.5f);
+            if(iconId == 3){
+                iconId = 0;
+                findViewById(R.id.icon3).setAlpha(1);
+            } else {
+                iconId = 3;
+                view.setAlpha(0.5f);
+            }
         } else {
             findViewById(R.id.icon3).setAlpha(1);
         }
         if(view.getId() == R.id.icon4){
-            iconId = 4;
-            view.setAlpha(0.5f);
+            if(iconId == 4){
+                iconId = 0;
+                findViewById(R.id.icon4).setAlpha(1);
+            } else {
+                iconId = 4;
+                view.setAlpha(0.5f);
+            }
         } else {
             findViewById(R.id.icon4).setAlpha(1);
         }
         if(view.getId() == R.id.icon5){
-            iconId = 5;
-            view.setAlpha(0.5f);
+            if(iconId == 5) {
+                iconId = 0;
+                findViewById(R.id.icon5).setAlpha(1);
+            } else {
+                iconId = 5;
+                view.setAlpha(0.5f);
+            }
         } else {
             findViewById(R.id.icon5).setAlpha(1);
         }
         if(view.getId() == R.id.icon6){
-            iconId = 6;
-            view.setAlpha(0.5f);
+            if(iconId == 6){
+                iconId = 0;
+                findViewById(R.id.icon6).setAlpha(1);
+            } else {
+                iconId = 6;
+                view.setAlpha(0.5f);
+            }
         } else {
             findViewById(R.id.icon6).setAlpha(1);
         }
         if(view.getId() == R.id.icon7){
-            iconId = 7;
-            view.setAlpha(0.5f);
+            if(iconId == 7){
+                iconId = 0;
+                findViewById(R.id.icon7).setAlpha(1);
+            } else {
+                iconId = 7;
+                view.setAlpha(0.5f);
+            }
         } else {
             findViewById(R.id.icon7).setAlpha(1);
         }
         if(view.getId() == R.id.icon8){
-            iconId = 8;
-            view.setAlpha(0.5f);
+            if(iconId == 8){
+                iconId = 0;
+                findViewById(R.id.icon8).setAlpha(1);
+            } else {
+                iconId = 8;
+                view.setAlpha(0.5f);
+            }
         } else {
             findViewById(R.id.icon8).setAlpha(1);
         }
-        if(view.getId() == R.id.icon9){
-            iconId = 9;
-            view.setAlpha(0.5f);
+        if(view.getId() == R.id.icon9 ){
+            if(iconId == 9){
+                iconId = 0;
+                findViewById(R.id.icon9).setAlpha(1);
+            } else {
+                iconId = 9;
+                view.setAlpha(0.5f);
+            }
         } else {
             findViewById(R.id.icon9).setAlpha(1);
         }
         if(view.getId() == R.id.icon10){
-            iconId = 10;
-            view.setAlpha(0.5f);
+            if(iconId == 10){
+                iconId = 0;
+                findViewById(R.id.icon10).setAlpha(1);
+            } else {
+                iconId = 10;
+                view.setAlpha(0.5f);
+            }
         } else {
             findViewById(R.id.icon10).setAlpha(1);
         }
