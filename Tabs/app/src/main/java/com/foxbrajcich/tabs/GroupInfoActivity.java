@@ -173,120 +173,138 @@ public class GroupInfoActivity extends AppCompatActivity {
                 TextView textView3 = (TextView) view.findViewById(R.id.contentTextView);
                 imageView.setImageResource(R.drawable.user);
                 textView.setText(groupMembers.get(position).getName());
-                textView2.setText("Contributed $" + String.format("%.02f",totalExpenses(sortExpenses(groupMembers.get(position)))));
-                textView3.setText("You owe $");
                 imageView.setImageResource(R.drawable.user);
+
                 textView.setText(debts.get(position).getDebtor().getName());
-                textView2.setText("$" + String.format("%.02f", debts.get(position).getAmount()));
-                textView3.setText("Net Amount Owed");
+
+                if(debts.get(position).getAmount() > 0) {
+                    textView2.setTextColor(Color.RED);
+                    textView2.setText("$" + String.format("%.02f", debts.get(position).getAmount()));
+                    textView3.setText("Amount You Owe");
+                } else if (group.getDebtsForUser(debts.get(position).getDebtor()).get(position).getAmount() > 0){
+                    textView2.setTextColor(Color.rgb(0,100,0));
+                    textView2.setText("$" + String.format("%.02f", group.getDebtsForUser(debts.get(position).getDebtor()).get(position).getAmount()));
+                    textView3.setText("Amount You Are Owed");
+                } else {
+                    textView2.setTextColor(Color.BLUE);
+                    textView2.setText(("$" + String.format("%.02f", debts.get(position).getAmount())));
+                    textView3.setText("Even");
+                }
+
                 return view;
             }
         };
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                return false;
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final int position = i;
-                final String amount = String.format("%.02f", debts.get(position).getAmount());
+                if(debts.get(position).getAmount() > 0) {
+                    final String amount = String.format("%.02f", debts.get(position).getAmount());
+                    LinearLayout linearLayout = new LinearLayout(GroupInfoActivity.this);
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    linearLayout.setPadding(10, 10, 10, 10);
 
-                LinearLayout linearLayout = new LinearLayout(GroupInfoActivity.this);
-                linearLayout.setOrientation(LinearLayout.VERTICAL);
-                linearLayout.setPadding(10, 10, 10, 10);
+                    CheckBox checkBox = new CheckBox(GroupInfoActivity.this);
+                    checkBox.setText("Pay in full");
+                    checkBox.setChecked(false);
 
-                CheckBox checkBox = new CheckBox(GroupInfoActivity.this);
-                checkBox.setText("Pay in full");
-                checkBox.setChecked(false);
-
-                final EditText editText = new EditText(GroupInfoActivity.this);
-                editText.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                editText.setHint("$0.00");
-                editText.setGravity(Gravity.RIGHT);
-                linearLayout.addView(checkBox);
-                linearLayout.addView(editText);
-                InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View view, boolean b) {
-                        if(!b){
-                            InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-                            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                        }
-                    }
-                });
-
-                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        if(compoundButton.isChecked()) {
-                            editText.setText(amount);
-                            editText.setEnabled(false);
-                            InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-                            inputMethodManager.hideSoftInputFromWindow(editText.getRootView().getWindowToken(), 0);
-                        }
-                        else {
-                            editText.setText("");
-                            editText.setEnabled(true);
-                            InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-                            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                        }
-                    }
-                });
-
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(GroupInfoActivity.this);
-                alertDialog.setCancelable(false);
-                alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialogInterface) {
-                        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-                        inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                    }
-                });
-                alertDialog.setTitle("Log Payment")
-                        .setView(linearLayout)
-                        .setPositiveButton(("Confirm"), new DialogInterface.OnClickListener(){
-                            // delete the note if clicked
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int j) {
-
-                                Transaction transaction = new Transaction();
-                                transaction.setAmount(Double.valueOf(editText.getText().toString()));
-
-                                if(group.isOnline()){
-                                    //TODO code for online logic
-                                }else {
-                                    transaction.setSendingUsersName(((User) spinner.getSelectedItem()).getName());
-                                    transaction.setReceivingUsersName(adapter.getItem(position).getDebtor().getName());
-                                }
-
-                                group.getTransactions().add(transaction);
-
-                                if(group.isOnline()){
-                                    //TODO code for online logic
-                                }else {
-                                    LocalDatabaseHelper.getInstance(GroupInfoActivity.this).addTransactionToGroup(group, transaction);
-                                }
-
-                                debts = group.getDebtsForUser((User) spinner.getSelectedItem());
-                                adapter.notifyDataSetChanged();
-                                InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-                                inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-
-                                createSegments();
-                                pieChart.animateY(1200, Easing.EasingOption.EaseInOutQuad);
+                    final EditText editText = new EditText(GroupInfoActivity.this);
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    editText.setHint("$0.00");
+                    editText.setGravity(Gravity.RIGHT);
+                    linearLayout.addView(checkBox);
+                    linearLayout.addView(editText);
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                    editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                        @Override
+                        public void onFocusChange(View view, boolean b) {
+                            if (!b) {
+                                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
                             }
-                        })
-                        .setNegativeButton(("Cancel"), new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int j) {
-                                InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-                                inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                        }
+                    });
+
+                    checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            if (compoundButton.isChecked()) {
+                                editText.setText(amount);
+                                editText.setEnabled(false);
+                                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                                inputMethodManager.hideSoftInputFromWindow(editText.getRootView().getWindowToken(), 0);
+                            } else {
+                                editText.setText("");
+                                editText.setEnabled(true);
+                                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                             }
-                        });
-                alertDialog.show();
+                        }
+                    });
+
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(GroupInfoActivity.this);
+                    alertDialog.setCancelable(false);
+                    alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                            inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                        }
+                    });
+                    alertDialog.setTitle("Log Payment")
+                            .setView(linearLayout)
+                            .setPositiveButton(("Confirm"), new DialogInterface.OnClickListener() {
+                                // delete the note if clicked
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int j) {
+
+                                    Transaction transaction = new Transaction();
+                                    transaction.setAmount(Double.valueOf(editText.getText().toString()));
+
+                                    if (group.isOnline()) {
+                                        //TODO code for online logic
+                                    } else {
+                                        transaction.setSendingUsersName(((User) spinner.getSelectedItem()).getName());
+                                        transaction.setReceivingUsersName(adapter.getItem(position).getDebtor().getName());
+                                    }
+
+                                    group.getTransactions().add(transaction);
+
+                                    if (group.isOnline()) {
+                                        //TODO code for online logic
+                                    } else {
+                                        LocalDatabaseHelper.getInstance(GroupInfoActivity.this).addTransactionToGroup(group, transaction);
+                                    }
+
+                                    debts = group.getDebtsForUser((User) spinner.getSelectedItem());
+                                    adapter.notifyDataSetChanged();
+                                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                                    inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+
+                                    createSegments();
+                                    pieChart.animateY(1200, Easing.EasingOption.EaseInOutQuad);
+                                }
+                            })
+                            .setNegativeButton(("Cancel"), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int j) {
+                                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                                    inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                                }
+                            });
+                    alertDialog.show();
+                }
+                return true;
             }
         });
 
