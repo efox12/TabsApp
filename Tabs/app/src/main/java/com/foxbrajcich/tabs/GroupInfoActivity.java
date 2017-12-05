@@ -288,9 +288,12 @@ public class GroupInfoActivity extends AppCompatActivity {
         for(int i = 0; i < groupMembers.size(); i++){
             String name = (groupMembers.get(i).getName());
             Double value = group.getTotalExpenseForUser(group.getMembers().get(i));
-            PieEntry entry = new PieEntry(Double.valueOf(value).floatValue(), name);
+            if(value > 0){
+                PieEntry entry = new PieEntry(Double.valueOf(value).floatValue(), name);
+                entries.add(entry);
+            }
             //entry.setLabel(generateSegmentSpannableText(name, String.format("%.02f", value)).toString());
-            entries.add(entry);
+
         }
         PieDataSet set = new PieDataSet(entries, "Expenses");
         set.setValueTextSize(10f);
