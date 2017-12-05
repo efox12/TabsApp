@@ -311,7 +311,9 @@ public class LoginActivity extends AppCompatActivity {
             Map<String, Object> usernames = (Map<String, Object>) dataSnapshot.getValue();
 
             for(String randomId : usernames.keySet()){
-                UserSession.addFriend(new User("", (String) usernames.get(randomId)));
+                User newFriend = new User("", (String) usernames.get(randomId));
+                UserDataFetcher.registerUserToPopulate(newFriend); //set up user populator to grab name of user and fill it
+                UserSession.addFriend(newFriend);
             }
 
             friendsListLoaded = true;
@@ -362,7 +364,9 @@ public class LoginActivity extends AppCompatActivity {
                 if(members != null && members.size() > 0) {
                     for (String memberId : members.keySet()) {
                         String username = (String) members.get(memberId);
-                        memberList.add(new User("", username));
+                        User newUser = new User("", username);
+                        UserDataFetcher.registerUserToPopulate(newUser);
+                        memberList.add(newUser);
                     }
                 }
 
