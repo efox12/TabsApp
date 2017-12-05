@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(!group.isOnline()) dbHelper.addGroupToDatabase(group); //if it's an offline group add it to the local
                 else createGroupInFirebase(group);
                 groupList.add(group);
+                groupsAdapter.notifyDataSetChanged();
 
                 //hide the sad face if it's showing
                 findViewById(R.id.noFriendsText).setVisibility(View.GONE);

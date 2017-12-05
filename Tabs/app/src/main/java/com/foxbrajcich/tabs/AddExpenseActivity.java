@@ -20,11 +20,13 @@ import android.widget.TextView;
 import java.util.List;
 
 public class AddExpenseActivity extends AppCompatActivity {
+
     Spinner spinner;
     List<User> users;
     ArrayAdapter<User> adapter;
     EditText expenseAmount;
     EditText expenseDescription;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +34,6 @@ public class AddExpenseActivity extends AppCompatActivity {
         spinner = (Spinner) findViewById(R.id.spinner);
         Group group = (Group) getIntent().getSerializableExtra("group");
         users = group.getMembers();
-        //group.getMembers();
 
         adapter = new ArrayAdapter<User>(this, android.R.layout.activity_list_item, android.R.id.text1, users) {
             @NonNull
@@ -43,7 +44,21 @@ public class AddExpenseActivity extends AppCompatActivity {
                 ImageView textView1 = (ImageView) view.findViewById(android.R.id.icon);
                 TextView textView2 = (TextView) view.findViewById(android.R.id.text1);
                 textView1.setImageResource(R.drawable.user);
-                textView2.setText(users.get(position).getName());
+
+                String username = users.get(position).getUsername();
+                String name = users.get(position).getName();
+
+                String suffix = "";
+
+                if(username.length() > 0) {
+                    if(username.equals(UserSession.getUsername())){
+                        suffix = " (me)";
+                    }else {
+                        suffix = " (" + username + ")";
+                    }
+                }
+
+                textView2.setText(name + suffix);
                 return view;
             }
 
@@ -55,7 +70,21 @@ public class AddExpenseActivity extends AppCompatActivity {
                 ImageView textView1 = (ImageView) view.findViewById(android.R.id.icon);
                 TextView textView2 = (TextView) view.findViewById(android.R.id.text1);
                 textView1.setImageResource(R.drawable.user);
-                textView2.setText(users.get(position).getName());
+
+                String username = users.get(position).getUsername();
+                String name = users.get(position).getName();
+
+                String suffix = "";
+
+                if(username.length() > 0) {
+                    if(username.equals(UserSession.getUsername())){
+                        suffix = " (me)";
+                    }else {
+                        suffix = " (" + username + ")";
+                    }
+                }
+
+                textView2.setText(name + suffix);
                 return view;
             }
         };

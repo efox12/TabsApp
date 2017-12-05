@@ -380,7 +380,9 @@ public class LoginActivity extends AppCompatActivity {
                             containsThisUser = true;
 
                         User newUser = new User(name, username);
-                        UserDataFetcher.registerUserToPopulate(newUser);
+                        if(username.length() > 0) {
+                            UserDataFetcher.registerUserToPopulate(newUser);
+                        }
                         memberList.add(newUser);
                     }
                 }
