@@ -27,7 +27,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static android.view.View.GONE;
@@ -143,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
         attemptingLogin = true;
 
         // Store values at the time of the login attempt.
-        final String username = mUsernameView.getText().toString();
+        final String username = mUsernameView.getText().toString().toLowerCase();
 
         showProgress(true);
 
@@ -185,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
 
         attemptingRegister = true;
 
-        final String username = mUsernameView.getText().toString();
+        final String username = mUsernameView.getText().toString().toLowerCase();
         final String name = ((EditText) findViewById(R.id.nameTextView)).getText().toString();
 
         final DatabaseReference childRef = mFirebaseDatabase.getReference("users").child(username);
@@ -322,15 +324,61 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            Log.d("test", dataSnapshot.toString());
-
             Map<String, Object> groups = (Map<String, Object>) dataSnapshot.getValue();
 
             for(String groupId : groups.keySet()){
                 Map<String, Object> groupInfo = (Map<String, Object>) groups.get(groupId);
                 String groupName = (String) groupInfo.get("name");
-            }
 
+                Map<String, Object> expenses = (Map<String, Object>) groupInfo.get("expenses");
+                Map<String, Object> members = (Map<String, Object>) groupInfo.get("members");
+                Map<String, Object> transactions = (Map<String, Object>) groupInfo.get("transactions");
+
+                List<Expense> expenseList = new ArrayList<>();
+                List<User> memberList = new ArrayList<>();
+                List<Transaction> transactionList = new ArrayList<>();
+
+                if(expenses != null && expenses.size() > 0) {
+                    for (String expenseId : expenses.keySet()) {
+                        Map<String, Object> expense = (Map<String, Object>) expenses.get(expenseId);
+
+                        String content = (String) expense.get("content");
+                        String username = (String) expense.get("username");
+                        double amount = ((java.lang.Number) expense.get("amount")).doubleValue();
+
+                        expenseList.add(new Expense(content, username, amount));
+                    }
+                }
+                if(members != null && members.size() > 0) {
+                    for (String memberId : members.keySet()) {
+                        String username = (String) members.get(memberId);
+                        memberList.add(new User("", username));
+                    }
+                }
+
+                if(transactions != null && transactions.size() > 0) {
+                    for (String transactionId : transactions.keySet()) {
+
+                        Map<String, Object> transaction = (Map<String, Object>) transactions.get(transactionId);
+
+                        String content = (String) transaction.get("content");
+                        String sendingUser = (String) transaction.get("sendingUser");
+                        String receivingUser = (String) transaction.get("receivingUser");
+                        double amount = ((java.lang.Number) transaction.get("amount")).doubleValue();
+
+                        Transaction newTransaction = new Transaction();
+                        newTransaction.setName(content);
+                        newTransaction.setReceivingUsername(receivingUser);
+                        newTransaction.setSendingUsername(sendingUser);
+                        newTransaction.setAmount(amount);
+
+                        transactionList.add(newTransaction);
+                    }
+                }
+
+                UserSession.addGroup(new Group(groupName, groupId, memberList, expenseList, transactionList, true));
+
+            }
 
             groupsListLoaded = true;
             databaseQueriedCallback();

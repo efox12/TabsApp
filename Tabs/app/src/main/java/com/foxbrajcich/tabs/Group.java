@@ -108,9 +108,9 @@ public class Group implements Serializable{
 
                 //subtract payments made to the debtor from the debt and add payments received
                 for(Transaction transaction : transactions){
-                    if(transaction.getReceivingUserName().equals(currentDebtor.getName()) && transaction.getSendingUserName().equals(user.getName())){
+                    if(transaction.getReceivingUsersName().equals(currentDebtor.getName()) && transaction.getSendingUsersName().equals(user.getName())){
                         owedToDebtor -= transaction.getAmount();
-                    }else if(transaction.getReceivingUserName().equals(user.getName()) && transaction.getSendingUserName().equals(currentDebtor.getName())){
+                    }else if(transaction.getReceivingUsersName().equals(user.getName()) && transaction.getSendingUsersName().equals(currentDebtor.getName())){
                         owedByDebtor -= transaction.getAmount();
                     }
                 }

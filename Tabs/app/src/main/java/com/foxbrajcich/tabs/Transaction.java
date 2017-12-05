@@ -10,10 +10,10 @@ public class Transaction implements Serializable{
     private String name;
     private int transactionId;
     private double amount;
-    private int sendingUserId;
-    private int receivingUserId;
-    private String sendingUserName;
-    private String receivingUserName;
+    private String sendingUsername;
+    private String receivingUsername;
+    private String sendingUsersName;
+    private String receivingUsersName;
 
     public String getName() {
         return name;
@@ -28,36 +28,36 @@ public class Transaction implements Serializable{
         this.amount = amount;
     }
 
-    public int getSendingUserId() {
-        return sendingUserId;
+    public String getSendingUsername() {
+        return sendingUsername;
     }
 
-    public void setSendingUserId(int sendingUserId) {
-        this.sendingUserId = sendingUserId;
+    public void setSendingUsername(String sendingUsername) {
+        this.sendingUsername = sendingUsername;
     }
 
-    public int getReceivingUserId() {
-        return receivingUserId;
+    public String getReceivingUsername() {
+        return receivingUsername;
     }
 
-    public void setReceivingUserId(int receivingUserId) {
-        this.receivingUserId = receivingUserId;
+    public void setReceivingUsername(String receivingUsername) {
+        this.receivingUsername = receivingUsername;
     }
 
-    public String getSendingUserName() {
-        return sendingUserName;
+    public String getSendingUsersName() {
+        return sendingUsersName;
     }
 
-    public void setSendingUserName(String sendingUserName) {
-        this.sendingUserName = sendingUserName;
+    public void setSendingUsersName(String sendingUsersName) {
+        this.sendingUsersName = sendingUsersName;
     }
 
-    public String getReceivingUserName() {
-        return receivingUserName;
+    public String getReceivingUsersName() {
+        return receivingUsersName;
     }
 
-    public void setReceivingUserName(String receivingUserName) {
-        this.receivingUserName = receivingUserName;
+    public void setReceivingUsersName(String receivingUsersName) {
+        this.receivingUsersName = receivingUsersName;
     }
 
     public void setName(String name) {

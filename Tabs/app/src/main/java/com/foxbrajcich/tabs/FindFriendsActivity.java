@@ -125,7 +125,7 @@ public class FindFriendsActivity extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            String s = charSequence.toString();
+            String s = charSequence.toString().toLowerCase();
 
             //get rid of the last handler to allow the new one to take over
             if(lastQuery != null){

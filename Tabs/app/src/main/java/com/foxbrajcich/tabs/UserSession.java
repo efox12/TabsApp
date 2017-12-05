@@ -14,9 +14,11 @@ public class UserSession {
     private static String username;
     private static String name;
     private static List<String> friendsUsernames;
+    private static List<Group> groupsList;
 
     static {
         friendsUsernames = new ArrayList<>();
+        groupsList = new ArrayList<>();
     }
 
     private UserSession(){}
@@ -25,6 +27,7 @@ public class UserSession {
         username = null;
         name = null;
         friendsUsernames = new ArrayList<>();
+        groupsList = new ArrayList<>();
     }
 
     public static void setName(String name){UserSession.name = name;}
@@ -46,5 +49,9 @@ public class UserSession {
     public static void addFriendsUsername(String username){
         friendsUsernames.add(username);
     }
+
+    public static List<Group> getGroupsList() { return groupsList; }
+
+    public static void addGroup(Group g) { groupsList.add(g); }
 
 }

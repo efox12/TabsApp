@@ -249,8 +249,8 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
             if(i != 0) linkTransactionsSql += ",";
 
-            linkTransactionsSql += " (null, '" + transaction.getName() + "', '" + transaction.getSendingUserName()
-                    + "', '" + transaction.getReceivingUserName() + "', " + transaction.getAmount() + ", " + groupId + ")";
+            linkTransactionsSql += " (null, '" + transaction.getName() + "', '" + transaction.getSendingUsersName()
+                    + "', '" + transaction.getReceivingUsersName() + "', " + transaction.getAmount() + ", " + groupId + ")";
         }
 
         linkTransactionsSql += ";";
@@ -276,8 +276,8 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
             //populate the new transaction object
             transaction.setTransactionId(cursor.getInt(0));
             transaction.setName(cursor.getString(1));
-            transaction.setSendingUserName(cursor.getString(2));
-            transaction.setReceivingUserName(cursor.getString(3));
+            transaction.setSendingUsersName(cursor.getString(2));
+            transaction.setReceivingUsersName(cursor.getString(3));
             transaction.setAmount(cursor.getDouble(4));
 
             transactions.add(transaction);
