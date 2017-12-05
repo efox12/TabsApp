@@ -242,6 +242,12 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public void addTransactionToGroup(Group group, Transaction transaction){
+        List<Transaction> toAdd = new ArrayList<>();
+        toAdd.add(transaction);
+        linkTransactionsToGroup(toAdd, Integer.parseInt(group.getGroupId()));
+    }
+
     public void linkTransactionsToGroup(List<Transaction> transactions, int groupId){
         if(transactions.size() < 1){
             return;

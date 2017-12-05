@@ -78,12 +78,6 @@ public class GroupActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        for(User user : group.getMembers()){
-            for(Debt d : group.getDebtsForUser(user)) {
-                Log.d("TEST_FUNCTION", user.getName() + ", debt: " + d);
-            }
-        }
-
     }
 
     @Override

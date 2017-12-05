@@ -58,7 +58,6 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
-import java.time.format.DecimalStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -211,40 +210,46 @@ public class GroupInfoActivity extends AppCompatActivity {
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                         if(compoundButton.isChecked()) {
                             editText.setText(amount);
+                            editText.setEnabled(false);
                         }
                         else {
                             editText.setText("");
+                            editText.setEnabled(true);
                         }
                     }
                 });
 
-                if(checkBox.isChecked()) {
-                    editText.setText(String.format("%.02f", debts.get(i).getAmount()));
-                }
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(GroupInfoActivity.this);
-                alertDialog.setTitle("Pay Person")
+                alertDialog.setTitle("Log Payment")
                         .setView(linearLayout)
-                        .setPositiveButton(("yes"), new DialogInterface.OnClickListener(){
+                        .setPositiveButton(("Confirm"), new DialogInterface.OnClickListener(){
                             // delete the note if clicked
                             @Override
                             public void onClick(DialogInterface dialogInterface, int j) {
+
                                 Transaction transaction = new Transaction();
                                 transaction.setAmount(Double.valueOf(editText.getText().toString()));
-                                transaction.setSendingUsersName(groupMembers.get(spinner.getSelectedItemPosition()).getName());
-                                transaction.setReceivingUsername(debts.get(position).getDebtor().getName());
-                                List<Transaction> transactionList = group.getTransactions();
-                                transactionList.add(transaction);
-                                group.setTransactions(transactionList);
-                                debts = group.getDebtsForUser(groupMembers.get(spinner.getSelectedItemPosition()));
+
+                                if(group.isOnline()){
+                                    //TODO code for online logic
+                                }else {
+                                    transaction.setSendingUsersName(((User) spinner.getSelectedItem()).getName());
+                                    transaction.setReceivingUsersName(adapter.getItem(position).getDebtor().getName());
+                                }
+
+                                group.getTransactions().add(transaction);
+
+                                if(group.isOnline()){
+                                    //TODO code for online logic
+                                }else {
+                                    LocalDatabaseHelper.getInstance(GroupInfoActivity.this).addTransactionToGroup(group, transaction);
+                                }
+
+                                debts = group.getDebtsForUser((User) spinner.getSelectedItem());
+                                adapter.notifyDataSetChanged();
                             }
                         })
-                        .setNegativeButton(("Cancel"),
-                                new DialogInterface.OnClickListener(){
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int j) {
-
-                                    }
-                                });
+                        .setNegativeButton("Cancel", null);
                 alertDialog.show();
             }
         });
