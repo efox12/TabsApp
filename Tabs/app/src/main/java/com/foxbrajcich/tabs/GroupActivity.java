@@ -19,8 +19,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -69,7 +74,7 @@ public class GroupActivity extends AppCompatActivity {
                 TextView textView2 = (TextView) view.findViewById(R.id.amountTextView);
                 TextView textView3 = (TextView) view.findViewById(R.id.contentTextView);
                 imageView.setImageResource(R.drawable.user);
-                textView.setText(expenses.get(position).getUserName());
+                textView.setText(expenses.get(position).getUsersName());
                 textView2.setText("$"+String.format("%.02f",expenses.get(position).getAmount()));
                 textView3.setText(expenses.get(position).getContent());
                 return view;
@@ -121,10 +126,25 @@ public class GroupActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if(data.hasExtra("expense")){
-                expenses.add((Expense) data.getSerializableExtra("expense"));
-                dbHelper.addExpenseToGroup(group,(Expense) data.getSerializableExtra("expense"));
+                Expense expense = (Expense) data.getSerializableExtra("expense");
+                expenses.add(expense);
+                if(!group.isOnline()) dbHelper.addExpenseToGroup(group,(Expense) data.getSerializableExtra("expense"));
+                else addExpenseToFirebaseGroup(expense, group);
                 adapter.notifyDataSetChanged();
             }
         }
     }
+
+    private void addExpenseToFirebaseGroup(Expense expense, Group group){
+        DatabaseReference expensesReference = FirebaseDatabase.getInstance().getReference("groups").child(group.getGroupId()).child("expenses");
+
+        Map<String, Object> expenseInfo = new HashMap<>();
+        expenseInfo.put("content", expense.getContent());
+        expenseInfo.put("amount", expense.getAmount());
+        expenseInfo.put("usersName", expense.getUsersName());
+        expenseInfo.put("username", expense.getUsername());
+
+        expensesReference.push().setValue(expenseInfo);
+    }
+
 }

@@ -318,7 +318,7 @@ public class GroupInfoActivity extends AppCompatActivity {
         List<Expense> userExpenseList= new ArrayList<>();
         List<Expense> expenses = group.getExpenses();
         for(int i = 0; i < expenses.size(); i++){
-            if(user.getName().compareTo(expenses.get(i).getUserName()) == 0){
+            if(user.getName().equals(expenses.get(i).getUsersName())){
                 userExpenseList.add(expenses.get(i));
             }
         }

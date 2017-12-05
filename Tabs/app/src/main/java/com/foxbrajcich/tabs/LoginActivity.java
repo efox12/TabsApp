@@ -361,9 +361,13 @@ public class LoginActivity extends AppCompatActivity {
 
                         String content = (String) expense.get("content");
                         String username = (String) expense.get("username");
+                        String usersName = (String) expense.get("usersName");
                         double amount = ((java.lang.Number) expense.get("amount")).doubleValue();
 
-                        expenseList.add(new Expense(content, username, amount));
+                        Expense newExpense = new Expense(content, usersName, amount);
+                        newExpense.setUsername(username);
+
+                        expenseList.add(newExpense);
                     }
                 }
 

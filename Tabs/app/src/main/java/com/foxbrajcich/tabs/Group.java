@@ -99,18 +99,20 @@ public class Group implements Serializable{
 
                 //total the expenses that this user owes to the given debtor
                 for(Expense expense : expenses){
-                    if(expense.getUserName().equals(currentDebtor.getName())){
+                    if(isSameUser(expense.getUsername(), expense.getUsersName(), currentDebtor)) {
                         owedToDebtor += expense.getAmount() / members.size();
-                    }else if(expense.getUserName().equals(user.getName())){
+                    }else if(isSameUser(expense.getUsername(), expense.getUsersName(), user)){
                         owedByDebtor += expense.getAmount() / members.size();
                     }
                 }
 
                 //subtract payments made to the debtor from the debt and add payments received
                 for(Transaction transaction : transactions){
-                    if(transaction.getReceivingUsersName().equals(currentDebtor.getName()) && transaction.getSendingUsersName().equals(user.getName())){
+                    if(isSameUser(transaction.getReceivingUsername(), transaction.getReceivingUsersName(), currentDebtor) &&
+                            isSameUser(transaction.getSendingUsername(), transaction.getSendingUsersName(), user)){
                         owedToDebtor -= transaction.getAmount();
-                    }else if(transaction.getReceivingUsersName().equals(user.getName()) && transaction.getSendingUsersName().equals(currentDebtor.getName())){
+                    }else if(isSameUser(transaction.getReceivingUsername(), transaction.getReceivingUsersName(), user) &&
+                            isSameUser(transaction.getSendingUsername(), transaction.getSendingUsersName(), currentDebtor)){
                         owedByDebtor -= transaction.getAmount();
                     }
                 }
@@ -137,7 +139,7 @@ public class Group implements Serializable{
         double sum = 0d;
 
         for(Expense expense: expenses){
-            if(expense.getUserName().equals(user.getName())){
+            if(isSameUser(expense.getUsername(), expense.getUsersName(), user)){
                 sum += expense.getAmount();
             }
         }
@@ -149,13 +151,29 @@ public class Group implements Serializable{
         double sum = 0d;
 
         for(Transaction transaction: transactions){
-            if(transaction.getSendingUsersName().equals(user.getName())){
+            if(isSameUser(transaction.getSendingUsername(), transaction.getSendingUsersName(), user)){
                 sum += transaction.getAmount();
-            } else if(transaction.getReceivingUsersName().equals(user.getName())){
+            } else if(isSameUser(transaction.getReceivingUsername(), transaction.getReceivingUsersName(), user)){
                 sum -= transaction.getAmount();
             }
         }
+
         sum += getTotalExpenseForUser(user);
         return sum;
+    }
+
+
+    private boolean isSameUser(String username, String name, User user){
+
+        if(username.equals(user.getUsername())){
+            if(username.length() < 1){ //if both users are offline
+                return name.equals(user.getName());
+            }else{
+                return true;
+            }
+        }
+
+        return false;
+
     }
 }

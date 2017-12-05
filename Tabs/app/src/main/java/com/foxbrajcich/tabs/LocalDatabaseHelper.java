@@ -198,7 +198,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
             if(i != 0) linkExpensesSql += ",";
 
-            linkExpensesSql += " (null, '" + expense.getContent() + "', '" + expense.getUserName()
+            linkExpensesSql += " (null, '" + expense.getContent() + "', '" + expense.getUsersName()
                     + "', " + groupId + ", " + expense.getAmount() + ")";
         }
 
@@ -235,7 +235,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
         String addExpenseSql = "INSERT INTO " + TABLE_EXPENSES +
                 " VALUES(null, '" + expense.getContent() + "', " +
-                "'" + expense.getUserName() + "', " + group.getGroupId() + ", " + expense.getAmount() + ")";
+                "'" + expense.getUsersName() + "', " + group.getGroupId() + ", " + expense.getAmount() + ")";
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(addExpenseSql);

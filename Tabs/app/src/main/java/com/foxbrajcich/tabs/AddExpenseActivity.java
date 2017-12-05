@@ -32,7 +32,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
         spinner = (Spinner) findViewById(R.id.spinner);
-        Group group = (Group) getIntent().getSerializableExtra("group");
+        final Group group = (Group) getIntent().getSerializableExtra("group");
         users = group.getMembers();
 
         adapter = new ArrayAdapter<User>(this, android.R.layout.activity_list_item, android.R.id.text1, users) {
@@ -50,12 +50,14 @@ public class AddExpenseActivity extends AppCompatActivity {
 
                 String suffix = "";
 
-                if(username.length() > 0) {
-                    if(username.equals(UserSession.getUsername())){
-                        suffix = " (me)";
-                    }else {
-                        suffix = " (" + username + ")";
-                    }
+                if(username.equals(UserSession.getUsername())){
+                    suffix = " (me)";
+                }else if(username.length() > 0){
+                    suffix = " (" + username + ")";
+                }
+
+                if(!group.isOnline() && name.equals(UserSession.getName())){
+                    suffix = " (me)";
                 }
 
                 textView2.setText(name + suffix);
@@ -76,12 +78,14 @@ public class AddExpenseActivity extends AppCompatActivity {
 
                 String suffix = "";
 
-                if(username.length() > 0) {
-                    if(username.equals(UserSession.getUsername())){
-                        suffix = " (me)";
-                    }else {
-                        suffix = " (" + username + ")";
-                    }
+                if(username.equals(UserSession.getUsername())){
+                    suffix = " (me)";
+                }else if(username.length() > 0){
+                    suffix = " (" + username + ")";
+                }
+
+                if(!group.isOnline() && name.equals(UserSession.getName())){
+                    suffix = " (me)";
                 }
 
                 textView2.setText(name + suffix);
@@ -128,11 +132,13 @@ public class AddExpenseActivity extends AppCompatActivity {
                 InputMethodManager inputMethodManager2 =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
                 inputMethodManager2.hideSoftInputFromWindow(expenseDescription.getWindowToken(), 0);
 
-                Intent intent = getIntent();
                 Expense expense = new Expense();
-                expense.setUserName(users.get(spinner.getSelectedItemPosition()).getName());
+                expense.setUsersName(users.get(spinner.getSelectedItemPosition()).getName());
+                expense.setUsername(users.get(spinner.getSelectedItemPosition()).getUsername());
                 expense.setAmount(Double.valueOf(expenseAmount.getText().toString()));
                 expense.setContent(expenseDescription.getText().toString());
+
+                Intent intent = getIntent();
                 intent.putExtra("expense", expense);
                 setResult(RESULT_OK, intent);
                 finishAfterTransition();
