@@ -14,11 +14,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 
 public class CreateGroupActivity extends AppCompatActivity implements View.OnClickListener {
     final int REQUEST_CODE = 1;
     int iconId;
     EditText title;
+    Switch onlineSwitch;
+
     View.OnClickListener listener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,8 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
 
         ImageView imageView10 = (ImageView) findViewById(R.id.icon10);
         imageView10.setOnClickListener(this);
+
+        onlineSwitch = findViewById(R.id.switch1);
     }
 
     @Override
@@ -160,14 +165,16 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.nextViewButton) {
+
+            if(title.getText().length() < 1){
+                title.setError("Please Enter a Title");
+                return true;
+            }
+
             Group group = new Group();
             group.setGroupIconId(iconId);
-            group.setOnline(false);
-            if(title.getText().length() > 0) {
-                group.setGroupTitle(title.getText().toString());
-            } else {
-                group.setGroupTitle("NO TITLE SET");
-            }
+            group.setOnline(!onlineSwitch.isChecked());
+            group.setGroupTitle(title.getText().toString());
             Intent intent = new Intent(this, AddFriendsToGroupActivity.class);
             intent.putExtra("group", group);
             startActivityForResult(intent, REQUEST_CODE);

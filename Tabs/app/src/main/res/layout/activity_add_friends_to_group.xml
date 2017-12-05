@@ -17,7 +17,10 @@
     <EditText
         android:id="@+id/addFriendsEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:maxLines="1" />
+
     <TextView
         android:paddingTop="10dp"
         android:layout_width="match_parent"
