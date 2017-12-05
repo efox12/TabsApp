@@ -230,11 +230,12 @@ public class GroupInfoActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialogInterface, int j) {
                                 Transaction transaction = new Transaction();
                                 transaction.setAmount(Double.valueOf(editText.getText().toString()));
-                                transaction.setSendingUsersName(groupMembers.get(spinner.getSelectedItemPosition()).getUsername());
-                                transaction.setReceivingUsername(debts.get(position).getDebtor().getUsername());
+                                transaction.setSendingUsersName(groupMembers.get(spinner.getSelectedItemPosition()).getName());
+                                transaction.setReceivingUsername(debts.get(position).getDebtor().getName());
                                 List<Transaction> transactionList = group.getTransactions();
                                 transactionList.add(transaction);
                                 group.setTransactions(transactionList);
+                                debts = group.getDebtsForUser(groupMembers.get(spinner.getSelectedItemPosition()));
                             }
                         })
                         .setNegativeButton(("Cancel"),
