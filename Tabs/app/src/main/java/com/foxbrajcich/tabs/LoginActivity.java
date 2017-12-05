@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.MutableBoolean;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean attemptingLogin = false;
     private boolean attemptingRegister = false;
     private boolean friendsListLoaded = false;
+    private boolean groupsListLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         // Set up the login form.
-        mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
+        mUsernameView = findViewById(R.id.username);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -272,10 +274,11 @@ public class LoginActivity extends AppCompatActivity {
         editor.commit();
 
         mFirebaseDatabase.getReference("users").child(username).child("friends").addListenerForSingleValueEvent(new FriendsListLoader());
+        mFirebaseDatabase.getReference("Groups").addListenerForSingleValueEvent(new GroupsListLoader());
     }
 
     private void databaseQueriedCallback(){
-        if(friendsListLoaded) {
+        if(friendsListLoaded && groupsListLoaded) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -307,6 +310,37 @@ public class LoginActivity extends AppCompatActivity {
         public void onCancelled(DatabaseError databaseError) {
 
         }
+    }
+
+    private class GroupsListLoader implements ValueEventListener {
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            if(!dataSnapshot.exists()){
+                groupsListLoaded = true;
+                databaseQueriedCallback();
+                return;
+            }
+
+            Log.d("test", dataSnapshot.toString());
+
+            Map<String, Object> groups = (Map<String, Object>) dataSnapshot.getValue();
+
+            for(String groupId : groups.keySet()){
+                Map<String, Object> groupInfo = (Map<String, Object>) groups.get(groupId);
+                String groupName = (String) groupInfo.get("name");
+            }
+
+
+            groupsListLoaded = true;
+            databaseQueriedCallback();
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+
     }
 
 }
