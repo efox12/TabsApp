@@ -59,9 +59,13 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.R.string.yes;
 import static com.foxbrajcich.tabs.R.id.spinner;
@@ -255,20 +259,15 @@ public class GroupInfoActivity extends AppCompatActivity {
                                 Transaction transaction = new Transaction();
                                 transaction.setAmount(Double.valueOf(editText.getText().toString()));
 
-                                if(group.isOnline()){
-                                    //TODO code for online logic
-                                }else {
-                                    transaction.setSendingUsersName(((User) spinner.getSelectedItem()).getName());
-                                    transaction.setReceivingUsersName(adapter.getItem(position).getDebtor().getName());
-                                }
+                                transaction.setSendingUsersName(((User) spinner.getSelectedItem()).getName());
+                                transaction.setSendingUsername(((User) spinner.getSelectedItem()).getUsername());
+                                transaction.setReceivingUsersName(adapter.getItem(position).getDebtor().getName());
+                                transaction.setReceivingUsername(adapter.getItem(position).getDebtor().getUsername());
 
                                 group.getTransactions().add(transaction);
 
-                                if(group.isOnline()){
-                                    //TODO code for online logic
-                                }else {
-                                    LocalDatabaseHelper.getInstance(GroupInfoActivity.this).addTransactionToGroup(group, transaction);
-                                }
+                                if(group.isOnline()) addTransactionToFirebase(transaction, group);
+                                else LocalDatabaseHelper.getInstance(GroupInfoActivity.this).addTransactionToGroup(group, transaction);
 
                                 debts = group.getDebtsForUser((User) spinner.getSelectedItem());
                                 adapter.notifyDataSetChanged();
@@ -375,5 +374,19 @@ public class GroupInfoActivity extends AppCompatActivity {
         s.setSpan(new StyleSpan(Typeface.ITALIC), 11, s.length(), 0);
         s.setSpan(new ForegroundColorSpan(Color.RED), 11, s.length(), 0);
         return s;
+    }
+
+    private void addTransactionToFirebase(Transaction transaction, Group group){
+        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("groups").child(group.getGroupId()).child("transactions");
+
+        Map<String, Object> transactionInfo = new HashMap<>();
+        transactionInfo.put("content", transaction.getName());
+        transactionInfo.put("amount", transaction.getAmount());
+        transactionInfo.put("sendingUser", transaction.getSendingUsername());
+        transactionInfo.put("sendingUsersName", transaction.getSendingUsersName());
+        transactionInfo.put("receivingUser", transaction.getReceivingUsername());
+        transactionInfo.put("receivingUsersName", transaction.getReceivingUsersName());
+
+        groupRef.push().setValue(transactionInfo);
     }
 }

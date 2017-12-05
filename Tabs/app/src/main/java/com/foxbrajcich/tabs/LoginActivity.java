@@ -403,12 +403,16 @@ public class LoginActivity extends AppCompatActivity {
                         String content = (String) transaction.get("content");
                         String sendingUser = (String) transaction.get("sendingUser");
                         String receivingUser = (String) transaction.get("receivingUser");
+                        String sendingUsersName = (String) transaction.get("sendingUsersName");
+                        String receivingUsersName = (String) transaction.get("receivingUsersName");
                         double amount = ((java.lang.Number) transaction.get("amount")).doubleValue();
 
                         Transaction newTransaction = new Transaction();
                         newTransaction.setName(content);
                         newTransaction.setReceivingUsername(receivingUser);
                         newTransaction.setSendingUsername(sendingUser);
+                        newTransaction.setReceivingUsersName(receivingUsersName);
+                        newTransaction.setSendingUsersName(sendingUsersName);
                         newTransaction.setAmount(amount);
 
                         transactionList.add(newTransaction);

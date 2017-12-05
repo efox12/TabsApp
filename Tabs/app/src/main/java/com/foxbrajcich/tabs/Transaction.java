@@ -15,6 +15,13 @@ public class Transaction implements Serializable{
     private String sendingUsersName;
     private String receivingUsersName;
 
+    public Transaction(){
+        sendingUsername = "";
+        receivingUsername = "";
+        sendingUsersName = "";
+        receivingUsersName = "";
+    }
+
     public String getName() {
         return name;
     }
