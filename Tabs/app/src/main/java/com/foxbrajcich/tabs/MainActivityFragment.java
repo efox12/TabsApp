@@ -199,7 +199,7 @@ public class MainActivityFragment extends ListFragment{
                         TextView textView1 = (TextView) view.findViewById(R.id.groupTextView2);
                         textView.setText(groups.get(position).getGroupTitle());
                         textView1.setText("Group");
-                        imageView.setImageResource(R.drawable.game);
+                        imageView.setImageResource(getImage(groups.get(position).getGroupIconId()));
                         return view;
                     }
                 };
@@ -236,5 +236,40 @@ public class MainActivityFragment extends ListFragment{
         }
         //adapter.notifyDataSetChanged();
         return rootView;
+    }
+    public int getImage(int i){
+        if(i == 1){
+            return R.drawable.basketball;
+        }
+        else if(i == 2){
+            return R.drawable.bee;
+        }
+        else if(i == 3){
+            return R.drawable.poo;
+        }
+        else if(i == 4){
+            return R.drawable.diamond;
+        }
+        else if(i == 5){
+            return R.drawable.game;
+        }
+        else if(i == 6){
+            return R.drawable.map;
+        }
+        else if(i == 7){
+            return R.drawable.gift;
+        }
+        else if(i == 8){
+            return R.drawable.house;
+        }
+        else if(i == 9){
+            return R.drawable.camping;
+        }
+        else if(i == 10){
+            return R.drawable.monster;
+        }
+        else{
+            return R.drawable.user;
+        }
     }
 }
