@@ -142,10 +142,14 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        attemptingLogin = true;
-
         // Store values at the time of the login attempt.
         final String username = mUsernameView.getText().toString().toLowerCase();
+
+        if(username.equals("")){
+            return;
+        }
+
+        attemptingLogin = true;
 
         showProgress(true);
 
@@ -185,10 +189,16 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        attemptingRegister = true;
+
 
         final String username = mUsernameView.getText().toString().toLowerCase();
         final String name = ((EditText) findViewById(R.id.nameTextView)).getText().toString();
+
+        if(username.equals("")){
+            return;
+        }
+
+        attemptingRegister = true;
 
         final DatabaseReference childRef = mFirebaseDatabase.getReference("users").child(username);
 
