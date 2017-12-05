@@ -274,6 +274,9 @@ public class GroupInfoActivity extends AppCompatActivity {
                                 adapter.notifyDataSetChanged();
                                 InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
                                 inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+
+                                createSegments();
+                                pieChart.animateY(1200, Easing.EasingOption.EaseInOutQuad);
                             }
                         })
                         .setNegativeButton(("Cancel"), new DialogInterface.OnClickListener(){
@@ -326,7 +329,7 @@ public class GroupInfoActivity extends AppCompatActivity {
         List<PieEntry> entries = new ArrayList<>();
         for(int i = 0; i < groupMembers.size(); i++){
             String name = (groupMembers.get(i).getName());
-            Double value = group.getTotalExpenseForUser(group.getMembers().get(i));
+            Double value = group.getTotalContributionForUser(group.getMembers().get(i));
             if(value > 0){
                 PieEntry entry = new PieEntry(Double.valueOf(value).floatValue(), name);
                 entries.add(entry);
