@@ -12,7 +12,7 @@ import java.util.List;
 public class Group implements Serializable{
 
     private String groupTitle;
-    private int groupId;
+    private String groupId;
     private List<User> members;
     private int groupIconId;
     List<Expense> expenses = new ArrayList<>();
@@ -21,7 +21,7 @@ public class Group implements Serializable{
 
     public Group(){}
 
-    public Group(String groupTitle, int groupId, List<User> members, List<Expense> expenses, List<Transaction> transactions, boolean isOnline){
+    public Group(String groupTitle, String groupId, List<User> members, List<Expense> expenses, List<Transaction> transactions, boolean isOnline){
         this.groupTitle = groupTitle;
         this.groupId = groupId;
         this.members = members;
@@ -40,11 +40,11 @@ public class Group implements Serializable{
         return groupTitle;
     }
 
-    public int getGroupId() {
+    public String getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(int groupId) {
+    public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
 

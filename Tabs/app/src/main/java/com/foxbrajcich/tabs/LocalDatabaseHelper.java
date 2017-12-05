@@ -152,7 +152,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
             int groupId = cursor.getInt(0);
             String groupName = cursor.getString(1);
 
-            Group newGroup = new Group(groupName, groupId, getGroupMembersById(groupId),
+            Group newGroup = new Group(groupName, String.valueOf(groupId), getGroupMembersById(groupId),
                     getGroupExpensesById(groupId), getGroupTransactionsById(groupId), false);
 
             groups.add(newGroup);
@@ -218,7 +218,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         int groupId = (int) c.getLong(0);
 
         //store the group's assigned id into the object
-        group.setGroupId(groupId);
+        group.setGroupId(String.valueOf(groupId));
 
         linkUsersToGroup(group.getMembers(), groupId);
         linkExpensesToGroup(group.getExpenses(), groupId);
