@@ -29,7 +29,9 @@ import java.util.Map;
 
 public class GroupActivity extends AppCompatActivity {
 
-    final static int REQUEST_CODE = 1;
+    final static int REQUEST_ADD_EXPENSE = 1;
+    final static int REQUEST_VIEW_INFO = 2;
+
     Group group;
     List<Expense> expenses = new ArrayList<>();
     ArrayAdapter<Expense> adapter;
@@ -50,7 +52,7 @@ public class GroupActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(GroupActivity.this, AddExpenseActivity.class);
                 intent.putExtra("group", group);
-                startActivityForResult(intent, REQUEST_CODE);
+                startActivityForResult(intent, REQUEST_ADD_EXPENSE);
                 overridePendingTransition(R.anim.slide_up_bottom, R.anim.fade_out);
             }
         });
@@ -96,7 +98,7 @@ public class GroupActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.addExpense) {
             Intent intent = new Intent(GroupActivity.this, GroupInfoActivity.class);
             intent.putExtra("group", group);
-            startActivityForResult(intent, REQUEST_CODE);
+            startActivityForResult(intent, REQUEST_VIEW_INFO);
             overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
           return true;
         }
@@ -124,12 +126,18 @@ public class GroupActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_ADD_EXPENSE && resultCode == Activity.RESULT_OK) {
             if(data.hasExtra("expense")){
                 Expense expense = (Expense) data.getSerializableExtra("expense");
                 expenses.add(expense);
                 if(!group.isOnline()) dbHelper.addExpenseToGroup(group,(Expense) data.getSerializableExtra("expense"));
                 else addExpenseToFirebaseGroup(expense, group);
+                adapter.notifyDataSetChanged();
+            }
+        }else if (requestCode == REQUEST_VIEW_INFO && resultCode == Activity.RESULT_OK) {
+            if(data.hasExtra("group")){
+                Group updatedGroup = (Group) data.getSerializableExtra("group");
+                group.setTransactions(updatedGroup.getTransactions());
                 adapter.notifyDataSetChanged();
             }
         }

@@ -5,12 +5,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.EmbossMaskFilter;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
-import android.provider.ContactsContract;
-import android.provider.Settings;
-import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -21,11 +16,11 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -48,16 +43,7 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendPosition;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.IDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -67,8 +53,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.R.string.yes;
-import static com.foxbrajcich.tabs.R.id.spinner;
 import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 
 public class GroupInfoActivity extends AppCompatActivity {
@@ -131,7 +115,7 @@ public class GroupInfoActivity extends AppCompatActivity {
                 ImageView textView1 = (ImageView) view.findViewById(android.R.id.icon);
                 TextView textView2 = (TextView) view.findViewById(android.R.id.text1);
                 textView1.setImageResource(R.drawable.user);
-                textView2.setText(groupMembers.get(position).getName());
+                textView2.setText(this.getItem(position).getName());
                 return view;
             }
 
@@ -143,7 +127,7 @@ public class GroupInfoActivity extends AppCompatActivity {
                 ImageView textView1 = (ImageView) view.findViewById(android.R.id.icon);
                 TextView textView2 = (TextView) view.findViewById(android.R.id.text1);
                 textView1.setImageResource(R.drawable.user);
-                textView2.setText(groupMembers.get(position).getName());
+                textView2.setText(this.getItem(position).getName());
                 return view;
             }
 
@@ -154,7 +138,8 @@ public class GroupInfoActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                debts = group.getDebtsForUser(groupMembers.get(i));
+                debts.clear();
+                debts.addAll(group.getDebtsForUser((User) adapterView.getItemAtPosition(i)));
                 adapter.notifyDataSetChanged();
             }
 
@@ -176,22 +161,20 @@ public class GroupInfoActivity extends AppCompatActivity {
                 TextView textView2 = (TextView) view.findViewById(R.id.amountTextView);
                 TextView textView3 = (TextView) view.findViewById(R.id.contentTextView);
                 imageView.setImageResource(R.drawable.user);
-                textView.setText(groupMembers.get(position).getName());
-                imageView.setImageResource(R.drawable.user);
 
-                textView.setText(debts.get(position).getDebtor().getName());
+                textView.setText(this.getItem(position).getDebtor().getName());
 
-                if(debts.get(position).getAmount() > 0) {
+                if(this.getItem(position).getAmount() >= 0.01d) {
                     textView2.setTextColor(Color.RED);
-                    textView2.setText("$" + String.format("%.02f", debts.get(position).getAmount()));
+                    textView2.setText("$" + String.format("%.02f", this.getItem(position).getAmount()));
                     textView3.setText("Amount You Owe");
-                } else if (group.getDebtsForUser(debts.get(position).getDebtor()).get(position).getAmount() > 0){
+                } else if (group.getDebtToUser(group.getDebtsForUser(this.getItem(position).getDebtor()), (User) spinner.getSelectedItem()).getAmount() >= 0.01d){
                     textView2.setTextColor(Color.rgb(0,100,0));
-                    textView2.setText("$" + String.format("%.02f", group.getDebtsForUser(debts.get(position).getDebtor()).get(position).getAmount()));
+                    textView2.setText("$" + String.format("%.02f", group.getDebtToUser(group.getDebtsForUser(this.getItem(position).getDebtor()), (User) spinner.getSelectedItem()).getAmount()));
                     textView3.setText("Amount You Are Owed");
                 } else {
                     textView2.setTextColor(Color.BLUE);
-                    textView2.setText(("$" + String.format("%.02f", debts.get(position).getAmount())));
+                    textView2.setText(("$" + String.format("%.02f", this.getItem(position).getAmount())));
                     textView3.setText("Even");
                 }
 
@@ -264,9 +247,9 @@ public class GroupInfoActivity extends AppCompatActivity {
                             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
                             inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                         }
-                });
+                    });
 
-                alertDialog.setTitle("Log Payment")
+                    alertDialog.setTitle("Log Payment")
                         .setView(linearLayout)
                         .setPositiveButton(("Confirm"), new DialogInterface.OnClickListener(){
                             // delete the note if clicked
@@ -286,8 +269,10 @@ public class GroupInfoActivity extends AppCompatActivity {
                                 if(group.isOnline()) addTransactionToFirebase(transaction, group);
                                 else LocalDatabaseHelper.getInstance(GroupInfoActivity.this).addTransactionToGroup(group, transaction);
 
-                                debts = group.getDebtsForUser((User) spinner.getSelectedItem());
+                                debts.clear();
+                                debts.addAll(group.getDebtsForUser((User) spinner.getSelectedItem()));
                                 adapter.notifyDataSetChanged();
+
                                 InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
                                 inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
 
@@ -302,7 +287,8 @@ public class GroupInfoActivity extends AppCompatActivity {
                                 inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
                             }
                         });
-                alertDialog.show();
+
+                    alertDialog.show();
 
                 }
                 return true;
@@ -409,4 +395,5 @@ public class GroupInfoActivity extends AppCompatActivity {
 
         groupRef.push().setValue(transactionInfo);
     }
+
 }

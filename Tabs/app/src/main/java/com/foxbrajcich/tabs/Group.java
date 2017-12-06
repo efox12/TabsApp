@@ -1,5 +1,7 @@
 package com.foxbrajcich.tabs;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -175,5 +177,16 @@ public class Group implements Serializable{
 
         return false;
 
+    }
+
+    public Debt getDebtToUser(List<Debt> debts, User user){
+
+        for(Debt debt : debts){
+            if(isSameUser(user.getUsername(), user.getName(), debt.getDebtor())){
+                return debt;
+            }
+        }
+
+        return null;
     }
 }
