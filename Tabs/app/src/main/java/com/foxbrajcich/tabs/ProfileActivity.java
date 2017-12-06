@@ -43,12 +43,12 @@ public class ProfileActivity extends AppCompatActivity {
                 TextView textView2 = (TextView) view.findViewById(R.id.amountTextView);
                 TextView textView3 = (TextView) view.findViewById(R.id.contentTextView);
                 imageView.setImageResource(R.drawable.user);
-                if(transactions.get(position).getReceivingUsersName() == UserSession.getName()){
-                    textView.setText(transactions.get(position).getSendingUsersName() + " Paid you");
+                if(transactions.get(position).getReceivingUsersName().equals(UserSession.getName())){
+                    textView.setText(transactions.get(position).getSendingUsersName() + " paid you");
                     textView2.setText("$"+String.format("%.02f",transactions.get(position).getAmount()));
                     textView2.setTextColor(Color.rgb(0, 100, 0));
                     textView3.setText("Group Name");
-                } else if(transactions.get(position).getSendingUsername() == UserSession.getName()){
+                } else if(transactions.get(position).getSendingUsersName().equals(UserSession.getName())){
                     textView.setText("You paid " + transactions.get(position).getReceivingUsersName());
                     textView2.setText("$"+String.format("%.02f",transactions.get(position).getAmount()));
                     textView2.setTextColor(Color.RED);
@@ -87,9 +87,9 @@ public class ProfileActivity extends AppCompatActivity {
         for(int i = 0; i < UserSession.getGroupsList().size(); i++){
             Group group = UserSession.getGroupsList().get(i);
             for(int j = 0; j < group.getTransactions().size(); j++){
-                if(group.getTransactions().get(j).getReceivingUsersName() == UserSession.getName()){
+                if(group.getTransactions().get(j).getReceivingUsersName().equals(UserSession.getName())){
                     transactions.add(group.getTransactions().get(j));
-                } else if(group.getTransactions().get(j).getSendingUsername() == UserSession.getName()){
+                } else if(group.getTransactions().get(j).getSendingUsersName().equals(UserSession.getName())){
                     transactions.add(group.getTransactions().get(j));
                 }
             }
