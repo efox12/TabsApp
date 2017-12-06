@@ -7,6 +7,7 @@
     android:background="@color/background"
     android:clickable="true"
     android:focusableInTouchMode="true"
+    android:padding="10dp"
     android:columnCount="2"
     tools:context="com.foxbrajcich.tabs.AddExpenseActivity">
 

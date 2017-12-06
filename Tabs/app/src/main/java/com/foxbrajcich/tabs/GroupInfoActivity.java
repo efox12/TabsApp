@@ -154,8 +154,6 @@ public class GroupInfoActivity extends AppCompatActivity {
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-
-
                 ImageView imageView = (ImageView) view.findViewById(R.id.groupImageView);
                 TextView textView = (TextView) view.findViewById(R.id.nameTextView);
                 TextView textView2 = (TextView) view.findViewById(R.id.amountTextView);
@@ -264,7 +262,9 @@ public class GroupInfoActivity extends AppCompatActivity {
                                 transaction.setReceivingUsersName(adapter.getItem(position).getDebtor().getName());
                                 transaction.setReceivingUsername(adapter.getItem(position).getDebtor().getUsername());
 
-                                group.getTransactions().add(transaction);
+                                List<Transaction> transactions= group.getTransactions();
+                                transactions.add(transaction);
+                                group.setTransactions(transactions);
 
                                 if(group.isOnline()) addTransactionToFirebase(transaction, group);
                                 else LocalDatabaseHelper.getInstance(GroupInfoActivity.this).addTransactionToGroup(group, transaction);

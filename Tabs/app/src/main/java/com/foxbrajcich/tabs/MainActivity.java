@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,15 +19,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     LocalDatabaseHelper dbHelper;
     List<Group> groupList;
     ArrayAdapter<Group> groupsAdapter;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     final static int NEW_REQUEST_CODE = 1;
     final static int EXISTING_GROUP_REQUEST_CODE = 2;
@@ -47,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         //populate the list of groups from the local database
         dbHelper = LocalDatabaseHelper.getInstance(this);
@@ -63,6 +72,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.main_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -110,6 +126,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 intent.putExtra("group", groupList.get(i));
                 intent.putExtra("position", i);
                 startActivityForResult(intent, EXISTING_GROUP_REQUEST_CODE);
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(MainActivity.this, "Not Available Yet", Toast.LENGTH_SHORT).show();
+                return false;
             }
         });
     }

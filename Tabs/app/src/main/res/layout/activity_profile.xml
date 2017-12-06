@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background"
-    android:padding="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -14,6 +13,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="center"
+        android:paddingTop="15dp"
         android:paddingBottom="10dp"
         app:srcCompat="@drawable/user" />
 
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:textSize="30sp"
+        android:textSize="25sp"
         android:text="NAME" />
 
     <TextView
@@ -31,7 +31,7 @@
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:paddingBottom="2dp"
         android:text="USERNAME" />
 
@@ -42,10 +42,17 @@
         android:gravity="center"
         android:text="Edit Profile"
         android:textColor="@android:color/holo_blue_light"
+        android:paddingBottom="10dp"
         android:textSize="10sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
     <ListView
         android:id="@+id/activityList"
+        android:paddingLeft="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>
