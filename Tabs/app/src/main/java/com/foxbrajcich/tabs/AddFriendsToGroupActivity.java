@@ -19,6 +19,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -55,14 +56,24 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.friendsList);
         addedUsersView = findViewById(R.id.groupMembers);
 
-        adapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_2, android.R.id.text1, users){
+        adapter = new ArrayAdapter<User>(this, R.layout.friend_list_layout, R.id.friendTextView, users){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
 
-                TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
+                TextView textView1 = (TextView) view.findViewById(R.id.friendTextView);
+                TextView textView2 = (TextView) view.findViewById(R.id.friendTextView2);
+
+                if(users.get(position) == offlineUserEntry){
+                    ((TextView) view.findViewById(R.id.friendshipStatus)).setVisibility(View.INVISIBLE);
+                    ((ImageView) view.findViewById(R.id.friendImageView)).setImageResource(R.drawable.add);
+                }else{
+                    ((ImageView) view.findViewById(R.id.friendImageView)).setImageResource(R.drawable.user);
+                }
+
+
+
                 textView1.setText(users.get(position).getName());
                 textView2.setText(users.get(position).getUsername());
                 return view;
