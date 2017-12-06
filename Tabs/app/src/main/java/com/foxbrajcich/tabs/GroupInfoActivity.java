@@ -84,17 +84,7 @@ public class GroupInfoActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.friendsList);
         List<User> otherUsers;
 
-        //find the object for the user who is logged in
-        User localUser = null;
-        for(User user : groupMembers) {
-            if(user.getName().equals(UserSession.getName())){
-                localUser = user;
-                debts = group.getDebtsForUser(localUser);
-                break;
-            }else {
-                debts = new ArrayList<>();
-            }
-        }
+        debts = new ArrayList<>();
 
         pieChart = (PieChart) findViewById(R.id.pieChart);
         pieChart.getLegend().setEnabled(false);
@@ -134,6 +124,7 @@ public class GroupInfoActivity extends AppCompatActivity {
 
         };
         spinner.setAdapter(adapterTwo);
+        debts.addAll(group.getDebtsForUser((User) spinner.getSelectedItem()));
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
