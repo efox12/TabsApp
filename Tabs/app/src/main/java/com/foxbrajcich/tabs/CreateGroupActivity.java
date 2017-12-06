@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -75,6 +77,18 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
         imageView10.setOnClickListener(this);
 
         onlineSwitch = findViewById(R.id.switch1);
+        onlineSwitch.setChecked(true);
+        onlineSwitch.setText("Online Group");
+        onlineSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    onlineSwitch.setText("Online Group");
+                } else {
+                    onlineSwitch.setText("Offline Group");
+                }
+            }
+        });
     }
 
     @Override
@@ -218,7 +232,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
             inputMethodManager.hideSoftInputFromWindow(title.getWindowToken(), 0);
             Group group = new Group();
             group.setGroupIconId(iconId);
-            group.setOnline(!onlineSwitch.isChecked());
+            group.setOnline(onlineSwitch.isChecked());
             group.setGroupTitle(title.getText().toString());
 
             Intent intent = new Intent(this, AddFriendsToGroupActivity.class);
@@ -259,6 +273,5 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
         overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
         super.onBackPressed();
     }
-
 }
 
