@@ -3,6 +3,7 @@ package com.foxbrajcich.tabs;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -63,7 +64,7 @@ public class GroupActivity extends AppCompatActivity {
             expenses = group.getExpenses();
         }
 
-        actionBar.setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_clear_white_24dp);
         ListView listView = (ListView) findViewById(R.id.expenseList);
         adapter = new ArrayAdapter<Expense>(this, R.layout.expense_list_layout, R.id.nameTextView, expenses){
             @NonNull
@@ -95,7 +96,7 @@ public class GroupActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.addExpense) {
+        if (item.getItemId() == R.id.group_info) {
             Intent intent = new Intent(GroupActivity.this, GroupInfoActivity.class);
             intent.putExtra("group", group);
             startActivityForResult(intent, REQUEST_VIEW_INFO);
