@@ -111,7 +111,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button signInButton = (Button) findViewById(R.id.sign_in_button);
+        final Button signInButton = (Button) findViewById(R.id.sign_in_button);
+        final Button cancelButton = (Button) findViewById(R.id.cancel_button);
+        final EditText nameField = (EditText) findViewById(R.id.nameTextView);
         signInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,18 +121,27 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button registerButton = (Button) findViewById(R.id.register_button);
+        final Button registerButton = (Button) findViewById(R.id.register_button);
         registerButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText nameField = (EditText) findViewById(R.id.nameTextView);
                 if(nameField.getText().toString().equals("")){
                     //show name field
                     nameField.setVisibility(VISIBLE);
+                    cancelButton.setVisibility(VISIBLE);
+                    signInButton.setVisibility(GONE);
                 }else{
                     //register the user
                     attemptRegister();
                 }
+            }
+        });
+        cancelButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nameField.setVisibility(GONE);
+                cancelButton.setVisibility(GONE);
+                signInButton.setVisibility(VISIBLE);
             }
         });
 
