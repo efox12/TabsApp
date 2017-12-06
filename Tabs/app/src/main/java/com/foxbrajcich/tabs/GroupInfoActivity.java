@@ -29,7 +29,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -83,7 +85,9 @@ public class GroupInfoActivity extends AppCompatActivity {
         groupMembers = group.getMembers();
         ListView listView = (ListView) findViewById(R.id.friendsList);
         List<User> otherUsers;
-
+        ScrollView scrollView = (ScrollView) findViewById(R.id.groupInfoScrollView);
+        scrollView.setSmoothScrollingEnabled(true);
+        scrollView.smoothScrollTo(0, 0);
         debts = new ArrayList<>();
 
         pieChart = (PieChart) findViewById(R.id.pieChart);
@@ -286,6 +290,35 @@ public class GroupInfoActivity extends AppCompatActivity {
             }
         });
 
+        //int totalHeight = 0;
+        //for(int i = 0; i < adapter.getCount(); i++){
+        //    View item = adapter.getView(i, null, listView);
+         //   item.measure(0,0);
+        //    totalHeight += item.getMeasuredHeight();
+        //}
+        //listView.setMinimumHeight(totalHeight);
+        getListHeight(listView);
+    }
+
+    public static void getListHeight (ListView listView) {
+
+        ListAdapter adapter = listView.getAdapter();
+
+        if (adapter == null) {
+            return;
+        }
+        ViewGroup viewGroup = listView;
+        int totalHeight = 0;
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View listItem = adapter.getView(i, null, viewGroup);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams par = listView.getLayoutParams();
+        par.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
+        listView.setLayoutParams(par);
+        listView.requestLayout();
     }
 
     @Override
