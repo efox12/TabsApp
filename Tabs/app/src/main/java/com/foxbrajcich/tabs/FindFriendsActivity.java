@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -64,7 +65,8 @@ public class FindFriendsActivity extends AppCompatActivity {
         });
 
         filteredUsers = new ArrayList<>();
-        arrayAdapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_2, android.R.id.text1, filteredUsers){
+
+        arrayAdapter = new ArrayAdapter<User>(this, R.layout.friend_list_layout, R.id.friendTextView, filteredUsers){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -72,8 +74,16 @@ public class FindFriendsActivity extends AppCompatActivity {
 
                 User user = getItem(position);
 
-                ((TextView) v.findViewById(android.R.id.text1)).setText(user.getName());
-                ((TextView) v.findViewById(android.R.id.text2)).setText(user.getUsername());
+                ((ImageView) v.findViewById(R.id.friendImageView)).setImageResource(R.drawable.user);
+
+                ((TextView) v.findViewById(R.id.friendTextView)).setText(user.getName());
+                ((TextView) v.findViewById(R.id.friendTextView2)).setText(user.getUsername());
+
+                if(isFriend(user)){
+                    ((TextView) v.findViewById(R.id.friendshipStatus)).setVisibility(View.VISIBLE);
+                }else{
+                    ((TextView) v.findViewById(R.id.friendshipStatus)).setVisibility(View.INVISIBLE);
+                }
 
                 return v;
             }
@@ -83,24 +93,30 @@ public class FindFriendsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final User user = (User) adapterView.getItemAtPosition(i);
-                new AlertDialog.Builder(FindFriendsActivity.this).setTitle("Add Friend")
-                        .setMessage("Would you like to add " + user.getName() + " (" + user.getUsername() + ") to your friends list?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                UserSession.addFriend(new User(user.getName(), user.getUsername()));
-                                filteredUsers.remove(user);
-                                mFirebaseDatabase.getReference("users").child(UserSession.getUsername()).child("friends").push().setValue(user.getUsername());
-                                mSearchView.setText("");
-                                arrayAdapter.notifyDataSetChanged();
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
+
+                if(!isFriend(user)) {
+                    new AlertDialog.Builder(FindFriendsActivity.this).setTitle("Add Friend")
+                            .setMessage("Would you like to add " + user.getName() + " (" + user.getUsername() + ") to your friends list?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    UserSession.addFriend(new User(user.getName(), user.getUsername()));
+                                    filteredUsers.remove(user);
+                                    mFirebaseDatabase.getReference("users").child(UserSession.getUsername()).child("friends").push().setValue(user.getUsername());
+                                    mSearchView.setText("");
+                                    arrayAdapter.notifyDataSetChanged();
+                                }
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
+                }
             }
         });
 
         mListView.setAdapter(arrayAdapter);
+
+        filteredUsers.addAll(UserSession.getFriends());
+        arrayAdapter.notifyDataSetChanged();
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mSearchView.addTextChangedListener(new SearchTypedHandler());
@@ -143,21 +159,26 @@ public class FindFriendsActivity extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            String s = charSequence.toString().toLowerCase();
 
             //get rid of the last handler to allow the new one to take over
-            if(lastQuery != null){
+            if (lastQuery != null) {
                 lastQuery.removeEventListener(currentHandler);
             }
 
-            filteredUsers.clear(); //empty the list in preparation to populate it
-            arrayAdapter.notifyDataSetChanged();
-            if(!s.equals("")){
-                lastQuery = mDataRef.orderByKey().startAt(s).endAt(s+"\uf8ff");
+            if(charSequence.length() < 1){
+                filteredUsers.clear();
+                filteredUsers.addAll(UserSession.getFriends());
+                arrayAdapter.notifyDataSetChanged();
+                lastQuery = null;
+            }else{
+                String s = charSequence.toString().toLowerCase();
+
+                filteredUsers.clear(); //empty the list in preparation to populate it
+                arrayAdapter.notifyDataSetChanged();
+
+                lastQuery = mDataRef.orderByKey().startAt(s).endAt(s + "\uf8ff");
                 currentHandler = new QueryHandler();
                 lastQuery.addValueEventListener(currentHandler);
-            }else{
-                lastQuery = null;
             }
 
         }
@@ -201,13 +222,31 @@ public class FindFriendsActivity extends AppCompatActivity {
             return false;
         }
 
-        for(User u : UserSession.getFriends()){
-            if(u.getUsername().equals(username)){
-                return false;
+        return true;
+    }
+
+    private boolean isSameUser(String username, String name, User user){
+
+        if(username.equals(user.getUsername())){
+            if(username.length() < 1){ //if both users are offline
+                return name.equals(user.getName());
+            }else{
+                return true;
             }
         }
 
-        return true;
+        return false;
+
+    }
+
+    private boolean isFriend(User user){
+        for(User friend: UserSession.getFriends()){
+            if(isSameUser(user.getUsername(), user.getName(), friend)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
