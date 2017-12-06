@@ -4,19 +4,19 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/profile"
-            android:icon="@android:drawable/ic_menu_agenda"
+            android:icon="@drawable/ic_person_black_24dp"
             android:title="Profile" />
         <item
             android:id="@+id/findFriends"
-            android:icon="@android:drawable/ic_menu_search"
+            android:icon="@drawable/ic_search_black_24dp"
             android:title="Find Friends" />
         <item
             android:id="@+id/settings"
-            android:icon="@android:drawable/ic_menu_preferences"
+            android:icon="@drawable/ic_settings_black_24dp"
             android:title="Settings" />
         <item
             android:id="@+id/help"
-            android:icon="@android:drawable/ic_menu_help"
+            android:icon="@drawable/ic_help_black_24dp"
             android:title="Help" />
     </group>
 
@@ -24,7 +24,7 @@
         <menu>
             <item
                 android:id="@+id/signOut"
-                android:icon="@android:drawable/ic_menu_revert"
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
                 android:title="Log out" />
 
         </menu>

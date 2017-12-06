@@ -164,11 +164,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivityForResult(intent, NEW_REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out);
         } else if (id == R.id.settings) {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivityForResult(intent, NEW_REQUEST_CODE);
-            overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out);
+            Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.help) {
-
+            Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.signOut) {
             SharedPreferences preferences = this.getSharedPreferences(LoginActivity.PREFERENCES_FILE, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
