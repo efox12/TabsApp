@@ -118,7 +118,7 @@ public class AddExpenseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.group_menu, menu);
+        getMenuInflater().inflate(R.menu.expense_info, menu);
         return true;
     }
 
