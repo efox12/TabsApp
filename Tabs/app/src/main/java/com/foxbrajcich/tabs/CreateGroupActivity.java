@@ -31,8 +31,9 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
 
         title = (EditText) findViewById(R.id.titleEditText);
 
-        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        title.requestFocus();
+        InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY);
 
         iconId = 0;
         title.setOnFocusChangeListener(new View.OnFocusChangeListener() {

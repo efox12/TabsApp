@@ -96,6 +96,7 @@ public class AddExpenseActivity extends AppCompatActivity {
 
         expenseAmount = (EditText) findViewById(R.id.expenseAmount);
         expenseDescription = (EditText) findViewById(R.id.expenseDiscription);
+
         expenseAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -114,6 +115,9 @@ public class AddExpenseActivity extends AppCompatActivity {
                 }
             }
         });
+        expenseAmount.requestFocus();
+        InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     @Override
@@ -150,7 +154,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(expenseAmount.getWindowToken(), 0);
             InputMethodManager inputMethodManager2 =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-            inputMethodManager2.hideSoftInputFromWindow(expenseDescription.getWindowToken(), 0);
+            inputMethodManager2.hideSoftInputFromInputMethod(expenseDescription.getWindowToken(), 0);
             Intent intent = getIntent();
             this.setResult(RESULT_OK, intent);
             finishAfterTransition();
