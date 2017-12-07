@@ -114,6 +114,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     public List<Transaction> getTransactions(){
         List<Transaction> transactions = new ArrayList<>();
+        List<Group> groups = new ArrayList<>();
         for(int i = 0; i < UserSession.getGroupsList().size(); i++){
             Group group = UserSession.getGroupsList().get(i);
             for(int j = 0; j < group.getTransactions().size(); j++){
