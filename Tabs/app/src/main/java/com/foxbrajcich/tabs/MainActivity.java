@@ -57,10 +57,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        //populate the list of groups from the local database
-        dbHelper = LocalDatabaseHelper.getInstance(this);
-        groupList = dbHelper.getAllOfflineGroups();
-        groupList.addAll(UserSession.getGroupsList());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -76,9 +72,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
             @Override
             public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(false);
+                refreshGroups();
             }
         });
+
+        groupList = new ArrayList<>();
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -91,16 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ((TextView) headerView.findViewById(R.id.drawerUsernameTextView)).setText(UserSession.getUsername());
         navigationView.setNavigationItemSelectedListener(this);
 
-        ListView listView =  (ListView) findViewById(R.id.groupList);
-        if(groupList.size() == 0){
-            TextView groupEmptyText = (TextView) findViewById(R.id.noFriendsText);
-            groupEmptyText.setText("No Groups Created");
-            findViewById(R.id.noFriendsText).setVisibility(View.VISIBLE);
-            findViewById(R.id.noFriendsSadFace).setVisibility(View.VISIBLE);
-        } else {
-            findViewById(R.id.noFriendsText).setVisibility(View.GONE);
-            findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
-        }
+        refreshGroups();
 
         groupsAdapter = new ArrayAdapter<Group>(this, R.layout.group_list_layout, R.id.groupTextView, groupList) {
             @NonNull
@@ -117,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return view;
             }
         };
+
+        ListView listView =  (ListView) findViewById(R.id.groupList);
 
         listView.setAdapter(groupsAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -269,6 +261,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         groupRef.setValue(groupData);
 
+    }
+
+    private void refreshGroups(){
+        swipeRefreshLayout.setRefreshing(true);
+
+        UserSession.refreshGroups(new OnDataFetchCompleteListener() {
+            @Override
+            public void onDataFetchComplete() {
+                //populate the list of groups from the databases
+                groupList.clear();
+                dbHelper = LocalDatabaseHelper.getInstance(MainActivity.this);
+                groupList.addAll(dbHelper.getAllOfflineGroups());
+                groupList.addAll(UserSession.getGroupsList());
+
+                if(groupList.size() == 0){
+                    TextView groupEmptyText = (TextView) findViewById(R.id.noFriendsText);
+                    groupEmptyText.setText("No Groups Created");
+                    findViewById(R.id.noFriendsText).setVisibility(View.VISIBLE);
+                    findViewById(R.id.noFriendsSadFace).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.noFriendsText).setVisibility(View.GONE);
+                    findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
+                    groupsAdapter.notifyDataSetChanged();
+                }
+
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
 }
