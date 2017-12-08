@@ -55,12 +55,12 @@ public class ProfileActivity extends AppCompatActivity {
                     textView.setText(transactions.get(position).getSendingUsersName() + " paid you");
                     textView2.setText("$"+String.format("%.02f",transactions.get(position).getAmount()));
                     textView2.setTextColor(Color.rgb(0, 100, 0));
-                    textView3.setText("Group Name");
+                    textView3.setText(getTransactions().get(position).getGroupName());
                 } else if(transactions.get(position).getSendingUsersName().equals(UserSession.getName())){
                     textView.setText("You paid " + transactions.get(position).getReceivingUsersName());
                     textView2.setText("$"+String.format("%.02f",transactions.get(position).getAmount()));
                     textView2.setTextColor(Color.RED);
-                    textView3.setText("Group Name");
+                    textView3.setText(getTransactions().get(position).getGroupName());
                 }
                 return view;
             }
@@ -115,14 +115,15 @@ public class ProfileActivity extends AppCompatActivity {
 
     public List<Transaction> getTransactions(){
         List<Transaction> transactions = new ArrayList<>();
-        List<Group> groups = new ArrayList<>();
         Log.d("test", UserSession.getGroupsList().toString());
         for(int i = 0; i < UserSession.getGroupsList().size(); i++){
             Group group = UserSession.getGroupsList().get(i);
             for(int j = 0; j < group.getTransactions().size(); j++){
                 if(group.getTransactions().get(j).getReceivingUsersName().equals(UserSession.getName())){
+                    group.getTransactions().get(j).setGroupName(group.getGroupTitle());
                     transactions.add(group.getTransactions().get(j));
                 } else if(group.getTransactions().get(j).getSendingUsersName().equals(UserSession.getName())){
+                    group.getTransactions().get(j).setGroupName(group.getGroupTitle());
                     transactions.add(group.getTransactions().get(j));
                 }
             }

@@ -14,6 +14,7 @@ public class Transaction implements Serializable{
     private String receivingUsername;
     private String sendingUsersName;
     private String receivingUsersName;
+    private String groupName;
 
     public Transaction(){
         sendingUsername = "";
@@ -26,6 +27,9 @@ public class Transaction implements Serializable{
         return name;
     }
 
+    public String getGroupName() { return groupName; }
+
+    public void setGroupName(String groupName) { this.groupName = groupName; }
 
     public double getAmount() {
         return amount;
