@@ -1,7 +1,6 @@
 package com.foxbrajcich.tabs;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -17,10 +15,10 @@ import android.widget.ImageView;
 import android.widget.Switch;
 
 public class CreateGroupActivity extends AppCompatActivity implements View.OnClickListener {
-    final int REQUEST_CODE = 1;
-    int iconId;
-    EditText title;
-    Switch onlineSwitch;
+    private final int REQUEST_CODE = 1;
+    private int iconId;
+    private EditText title;
+    private Switch onlineSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +27,13 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Name your group");
 
+        // open keyboard to edit text when activity is started
         title = (EditText) findViewById(R.id.titleEditText);
-
         title.requestFocus();
         InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY);
 
-        iconId = 0;
+        // hide keyboard when click outside of editText
         title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -46,7 +44,8 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-
+        iconId = 0;
+        // get the group icons
         ImageView imageView1 = (ImageView) findViewById(R.id.icon1);
         imageView1.setOnClickListener(this);
 
@@ -77,16 +76,19 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
         ImageView imageView10 = (ImageView) findViewById(R.id.icon10);
         imageView10.setOnClickListener(this);
 
+        // add a switch to choose online or offline group
         onlineSwitch = findViewById(R.id.switch1);
         onlineSwitch.setChecked(true);
-        onlineSwitch.setText("Online Group");
+        onlineSwitch.setText(R.string.onlineGroup);
+
+        // change text to match selected group type
         onlineSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
-                    onlineSwitch.setText("Online Group");
+                    onlineSwitch.setText(R.string.onlineGroup);
                 } else {
-                    onlineSwitch.setText("Offline Group");
+                    onlineSwitch.setText(R.string.offlineGroup);
                 }
             }
         });
@@ -94,6 +96,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View view) {
+        // set the group icon to the selected icon
         if(view.getId() == R.id.icon1){
             if(iconId == 1){
                 iconId = 0;
@@ -204,7 +207,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
         } else {
             findViewById(R.id.icon10).setAlpha(1);
         }
-
+        // close the keyboard
         InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(title.getRootView().getWindowToken(), 0);
     }
@@ -212,25 +215,22 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_title_menu, menu);
-        final Menu menu1 = menu;
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
         if (id == R.id.nextViewButton) {
 
             if(title.getText().length() < 1){
-                title.setError("Please Enter a Title");
+                title.setError(getString(R.string.pleaseEnterATitle));
                 return true;
             }
+            // close the keyboard
             InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(title.getWindowToken(), 0);
+            // create a new group and set the relevant fields
             Group group = new Group();
             group.setGroupIconId(iconId);
             group.setOnline(onlineSwitch.isChecked());
@@ -238,21 +238,25 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
 
             Intent intent = new Intent(this, AddFriendsToGroupActivity.class);
             intent.putExtra("group", group);
-            startActivityForResult(intent, REQUEST_CODE);
 
+            // override the transition
+            startActivityForResult(intent, REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out);
             return true;
         }
 
         if(item.getItemId() == android.R.id.home){
+            // close the keyboard
             InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(title.getWindowToken(), 0);
+
             Intent intent = new Intent();
             this.setResult(Activity.RESULT_OK, intent);
+
+            // override the transition
             this.finishAfterTransition();
             overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -263,6 +267,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
             this.setResult(Activity.RESULT_OK, data);
             this.finish();
         } else {
+            // hide the keyboard
             InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
@@ -270,6 +275,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onBackPressed() {
+        // override the transition
         this.finishAfterTransition();
         overridePendingTransition(R.anim.fade_in, R.anim.slide_down_top);
         super.onBackPressed();

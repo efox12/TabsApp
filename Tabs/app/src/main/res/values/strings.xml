@@ -103,4 +103,18 @@
     <string name="findFriends">Find Friends</string>
     <string name="settings">Settings</string>
     <string name="profile">Profile</string>
+    <string name="lparen">\u0020(</string>
+    <string name="rparen">)</string>
+    <string name="me">\u0020(me)</string>
+    <string name="empty" />
+    <string name="spaceMe">\u0020(me)</string>
+    <string name="addGroupMembers">Add Group Members</string>
+    <string name="addOfflineUser">Add as Offline User</string>
+    <string name="group">group</string>
+    <string name="done">DONE</string>
+    <string name="members">Members:\u0020</string>
+    <string name="comma">,\u0020</string>
+    <string name="onlineGroup">Online Group</string>
+    <string name="offlineGroup">Offline Group</string>
+    <string name="pleaseEnterATitle">Please Enter a Title</string>
 </resources>

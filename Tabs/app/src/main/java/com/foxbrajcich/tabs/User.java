@@ -1,7 +1,6 @@
 package com.foxbrajcich.tabs;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by erikfox on 11/15/17.

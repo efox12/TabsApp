@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,18 +25,15 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.app.Activity.RESULT_OK;
-
 public class AddFriendsToGroupActivity extends AppCompatActivity {
-    ArrayAdapter<User> adapter;
-    List<User> users = new ArrayList<>();
-    List<User> groupMembers = new ArrayList<>();
-    List<String> groupMemberNames = new ArrayList<>();
-    Group group;
-    EditText editText;
-    User offlineUserEntry;
-
-    TextView addedUsersView;
+    private ArrayAdapter<User> adapter;
+    private List<User> users = new ArrayList<>();
+    private List<User> groupMembers = new ArrayList<>();
+    private List<String> groupMemberNames = new ArrayList<>();
+    private Group group;
+    private EditText editText;
+    private User offlineUserEntry;
+    private TextView addedUsersView;
 
 
     @Override
@@ -45,23 +41,29 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friends_to_group);
 
+        // set the action bar title
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Add Group Members");
+        actionBar.setTitle(R.string.addGroupMembers);
 
+        // create the listView entry to add offline users
         offlineUserEntry = new User();
-        offlineUserEntry.setUsername("Add as Offline User");
+        offlineUserEntry.setUsername(getString(R.string.addOfflineUser));
         offlineUserEntry.setOnline(false);
 
-        group = (Group) getIntent().getSerializableExtra("group");
+
+        group = (Group) getIntent().getSerializableExtra(getString(R.string.group));
+
         ListView listView = (ListView) findViewById(R.id.friendsList);
         addedUsersView = findViewById(R.id.groupMembers);
 
+        // adapter for displaying friends
         adapter = new ArrayAdapter<User>(this, R.layout.friend_list_layout, R.id.friendTextView, users){
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
 
+                //get the views in the layout
                 TextView textView1 = (TextView) view.findViewById(R.id.friendTextView);
                 TextView textView2 = (TextView) view.findViewById(R.id.friendTextView2);
 
@@ -72,24 +74,23 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
                     ((ImageView) view.findViewById(R.id.friendImageView)).setImageResource(R.drawable.user);
                 }
 
-
-
+                // set the views in the layout
                 textView1.setText(users.get(position).getName());
                 textView2.setText(users.get(position).getUsername());
                 return view;
             }
         };
-
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+
         editText = (EditText) findViewById(R.id.addFriendsEditText);
         final TextView textView = (TextView) findViewById(R.id.groupMembers);
-
+        // shows the keyboard when the activity starts
         editText.requestFocus();
         InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,InputMethodManager.HIDE_IMPLICIT_ONLY);
-
+        // hides the keyboard when the user clicks outside the edit text
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -100,6 +101,7 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
             }
         });
 
+        // hides keyboard when the user starts to scroll through the list
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
@@ -113,35 +115,37 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
             }
         });
 
+        //
         User homeUser = new User(UserSession.getName(), UserSession.getUsername());
         groupMembers.add(homeUser);
         group.setMembers(groupMembers);
-        addUsersNameToList(homeUser.getName() + " (me)");
+        addUsersNameToList(homeUser.getName() + getString(R.string.spaceMe));
 
-        //User offlineUser = new User();
-        //offlineUser.setName("Add Offline User");
-        //users.add(0, offlineUser);
-        //adapter.notifyDataSetChanged();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 User clickedUser = (User) adapterView.getItemAtPosition(i);
                 if(clickedUser == offlineUserEntry){
+                    // add an offline user to the group if the option is clicked
                     if(editText.length() > 0){
+                        //create offline user
                         User user = new User();
                         user.setName(editText.getText().toString());
                         groupMembers.add(user);
                         addUsersNameToList(editText.getText().toString());
-                        editText.setText("");
+                        editText.setText(getString(R.string.empty));
                     }
+
                 }else{
+                    // add the corresponding online user to the group
                     groupMembers.add(clickedUser);
-                    addUsersNameToList(clickedUser.getName() + " (" + clickedUser.getUsername() + ")");
-                    editText.setText("");
+                    addUsersNameToList(clickedUser.getName() + getString(R.string.lparen) + clickedUser.getUsername() + getString(R.string.rparen));
+                    editText.setText(getString(R.string.empty));
                 }
             }
         });
 
+        // display the add offline after text has been entered
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -172,33 +176,37 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_title_menu, menu);
-        menu.getItem(0).setTitle("DONE");
+        menu.getItem(0).setTitle(R.string.done);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
         if(item.getItemId() == android.R.id.home){
+            // hide the keyboard
             InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+
             Intent intent = getIntent();
             intent.putExtra("group", group);
             this.setResult(100, intent);
+
+            // override the transition
             finishAfterTransition();
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             return true;
         }
-        //noinspection SimplifiableIfStatement
         if (id == R.id.nextViewButton) {
+            // hide the keyboard
             InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+
             Intent intent = getIntent();
             intent.putExtra("group", group);
             this.setResult(RESULT_OK, intent);
+
             finish();
             return true;
         }
@@ -208,18 +216,23 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        // override the transition
         finishAfterTransition();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         super.onBackPressed();
     }
 
+    /**
+     *
+     * @param usersName
+     */
     private void addUsersNameToList(String usersName){
         groupMemberNames.add(usersName);
 
-        String newText = "Members: ";
+        String newText = getString(R.string.members);
 
         for(int i = 0; i < groupMemberNames.size(); i++){
-            if(i != 0) newText += ", ";
+            if(i != 0) newText += getString(R.string.comma);
             newText += groupMemberNames.get(i);
         }
 
@@ -227,6 +240,11 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @param filter
+     * @return
+     */
     private List<User> filterFriends(String filter){
         List<User> filteredUsers = new ArrayList<>();
 
@@ -246,13 +264,18 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
         return filteredUsers;
     }
 
+    /**
+     *
+     * @param u
+     * @return
+     */
     private boolean userAlreadyAdded(User u){
         for(User user : groupMembers){
             if(user.getName().toLowerCase().equals(u.getName().toLowerCase())){
                 return true;
             }
 
-            if(!user.getUsername().equals("") && user.getUsername().toLowerCase().equals(u.getUsername().toLowerCase())){
+            if(!user.getUsername().equals(getString(R.string.empty)) && user.getUsername().toLowerCase().equals(u.getUsername().toLowerCase())){
                 return true;
             }
         }
