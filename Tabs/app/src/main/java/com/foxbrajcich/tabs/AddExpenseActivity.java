@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AddExpenseActivity extends AppCompatActivity {
@@ -33,7 +34,16 @@ public class AddExpenseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_expense);
         spinner = (Spinner) findViewById(R.id.spinner);
         final Group group = (Group) getIntent().getSerializableExtra("group");
-        users = group.getMembers();
+
+        users = new ArrayList<>();
+
+        for(User u : group.getMembers()){
+            if(u.getUsername().length() < 1){
+                users.add(u);
+            }else if(u.getUsername().equals(UserSession.getUsername())){
+                users.add(0, u);
+            }
+        }
 
         adapter = new ArrayAdapter<User>(this, android.R.layout.activity_list_item, android.R.id.text1, users) {
             @NonNull

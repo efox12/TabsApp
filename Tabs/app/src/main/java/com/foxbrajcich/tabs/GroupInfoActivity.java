@@ -63,6 +63,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     ArrayAdapter<User> adapterTwo;
     List<Debt> debts;
     List<User> groupMembers = new ArrayList<>();
+    List<User> displayMembers = new ArrayList<>();
     Group group;
     PieChart pieChart;
 
@@ -82,7 +83,17 @@ public class GroupInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_info);
         group = (Group) getIntent().getSerializableExtra("group");
+
         groupMembers = group.getMembers();
+        displayMembers = new ArrayList<>();
+        for(User u : groupMembers){
+            if(u.getUsername().length() < 1){
+                displayMembers.add(u);
+            }else if(u.getUsername().equals(UserSession.getUsername())){
+                displayMembers.add(0, u);
+            }
+        }
+
         ListView listView = (ListView) findViewById(R.id.friendsList);
         List<User> otherUsers;
         ScrollView scrollView = (ScrollView) findViewById(R.id.groupInfoScrollView);
@@ -100,7 +111,7 @@ public class GroupInfoActivity extends AppCompatActivity {
         pieChart.setDescription(description);
 
         final Spinner spinner = (Spinner) findViewById(R.id.groupMembersSpinner);
-        adapterTwo = new ArrayAdapter<User>(this, android.R.layout.activity_list_item, android.R.id.text1, groupMembers) {
+        adapterTwo = new ArrayAdapter<User>(this, android.R.layout.activity_list_item, android.R.id.text1, displayMembers) {
             @NonNull
             @Override
             public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -109,7 +120,8 @@ public class GroupInfoActivity extends AppCompatActivity {
                 ImageView textView1 = (ImageView) view.findViewById(android.R.id.icon);
                 TextView textView2 = (TextView) view.findViewById(android.R.id.text1);
                 textView1.setImageResource(R.drawable.user);
-                textView2.setText(this.getItem(position).getName());
+                User user = this.getItem(position);
+                textView2.setText(user.getName() + (user.getUsername().equals(UserSession.getUsername()) ? " (me)" : ""));
                 return view;
             }
 
@@ -121,7 +133,8 @@ public class GroupInfoActivity extends AppCompatActivity {
                 ImageView textView1 = (ImageView) view.findViewById(android.R.id.icon);
                 TextView textView2 = (TextView) view.findViewById(android.R.id.text1);
                 textView1.setImageResource(R.drawable.user);
-                textView2.setText(this.getItem(position).getName());
+                User user = this.getItem(position);
+                textView2.setText(user.getName() + (user.getUsername().equals(UserSession.getUsername()) ? " (me)" : ""));
                 return view;
             }
 
@@ -135,7 +148,7 @@ public class GroupInfoActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 debts.clear();
                 debts.addAll(group.getDebtsForUser((User) adapterView.getItemAtPosition(i)));
-                adapter.notifyDataSetChanged();
+                updateListView();
             }
 
             @Override
@@ -156,15 +169,29 @@ public class GroupInfoActivity extends AppCompatActivity {
                 imageView.setImageResource(R.drawable.user);
 
                 textView.setText(this.getItem(position).getDebtor().getName());
+                User userSelected = adapterTwo.getItem(spinner.getSelectedItemPosition());
+                User debtor = this.getItem(position).getDebtor();
 
                 if(this.getItem(position).getAmount() >= 0.01d) {
                     textView2.setTextColor(Color.RED);
                     textView2.setText("$" + String.format("%.02f", this.getItem(position).getAmount()));
-                    textView3.setText("Amount You Owe");
+                    if(userSelected.getUsername().equals(UserSession.getUsername())){
+                        //use "you"
+                        textView3.setText("Amount you owe");
+                    }else{
+                        textView3.setText("Amount " + userSelected.getName() + " owes");
+                    }
+
                 } else if (group.getDebtToUser(group.getDebtsForUser(this.getItem(position).getDebtor()), (User) spinner.getSelectedItem()).getAmount() >= 0.01d){
                     textView2.setTextColor(Color.rgb(0,100,0));
                     textView2.setText("$" + String.format("%.02f", group.getDebtToUser(group.getDebtsForUser(this.getItem(position).getDebtor()), (User) spinner.getSelectedItem()).getAmount()));
-                    textView3.setText("Amount You Are Owed");
+                    if(userSelected.getUsername().equals(UserSession.getUsername())){
+                        //use "you"
+                        textView3.setText("Amount you are owed");
+                    }else{
+                        textView3.setText("Amount " + userSelected.getName() + " is owed");
+                    }
+
                 } else {
                     textView2.setTextColor(Color.BLUE);
                     textView2.setText(("$" + String.format("%.02f", this.getItem(position).getAmount())));
@@ -175,7 +202,7 @@ public class GroupInfoActivity extends AppCompatActivity {
             }
         };
         listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        updateListView();
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -266,7 +293,7 @@ public class GroupInfoActivity extends AppCompatActivity {
 
                                 debts.clear();
                                 debts.addAll(group.getDebtsForUser((User) spinner.getSelectedItem()));
-                                adapter.notifyDataSetChanged();
+                                updateListView();
 
                                 InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
                                 inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(), 0);
@@ -418,6 +445,17 @@ public class GroupInfoActivity extends AppCompatActivity {
         transactionInfo.put("receivingUsersName", transaction.getReceivingUsersName());
 
         groupRef.push().setValue(transactionInfo);
+    }
+
+    private void updateListView(){
+        Spinner userSpinner = findViewById(R.id.groupMembersSpinner);
+        User userSelected = adapterTwo.getItem(userSpinner.getSelectedItemPosition());
+        if(userSelected.getUsername().equals(UserSession.getUsername())){
+            ((TextView) findViewById(R.id.textView6)).setText("Your Debts");
+        }else{
+            ((TextView) findViewById(R.id.textView6)).setText(userSelected.getName() + "'s Debts");
+        }
+        adapter.notifyDataSetChanged();
     }
 
 }

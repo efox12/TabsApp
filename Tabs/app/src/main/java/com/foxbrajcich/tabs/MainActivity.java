@@ -135,8 +135,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(MainActivity.this, "Not Available Yet", Toast.LENGTH_SHORT).show();
-                return false;
+                final int position = i;
+
+                return true;
             }
         });
     }
