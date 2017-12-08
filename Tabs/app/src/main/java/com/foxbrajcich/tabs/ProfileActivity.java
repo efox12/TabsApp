@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,6 +116,7 @@ public class ProfileActivity extends AppCompatActivity {
     public List<Transaction> getTransactions(){
         List<Transaction> transactions = new ArrayList<>();
         List<Group> groups = new ArrayList<>();
+        Log.d("test", UserSession.getGroupsList().toString());
         for(int i = 0; i < UserSession.getGroupsList().size(); i++){
             Group group = UserSession.getGroupsList().get(i);
             for(int j = 0; j < group.getTransactions().size(); j++){

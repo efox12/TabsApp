@@ -16,36 +16,28 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:label="@string/app_name"></activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".FriendsActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".TransactionsActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CreateGroupActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".AddFriendsToGroupActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".CreateGroupActivity" />
+            android:parentActivityName=".CreateGroupActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".GroupActivity"
             android:parentActivityName=".MainActivity"
@@ -54,28 +46,32 @@
         <activity
             android:name=".ProfileActivity"
             android:label="@string/profile"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/settings"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".FindFriendsActivity"
             android:label="@string/findFriends"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity">
-        </activity>
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".AddExpenseActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".GroupActivity">
-        </activity>
+            android:parentActivityName=".GroupActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".GroupInfoActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".GroupActivity">
+            android:parentActivityName=".GroupActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".SplashScreen" android:label="Tabs"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

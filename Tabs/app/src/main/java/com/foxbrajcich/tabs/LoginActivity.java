@@ -49,43 +49,19 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean attemptingLogin = false;
     private boolean attemptingRegister = false;
-    private boolean friendsListLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //make dummy query to database to initialize connection
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseDatabase.getReference("users").child("").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //do nothing
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //do nothing
-            }
-        });
-
-        UserSession.clearUserSession();
-
         mProgressView = findViewById(R.id.login_progress);
         mLoginFormView = findViewById(R.id.login_form);
 
-        SharedPreferences preferences = this.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-
-        String storedName =  preferences.getString("name", "");
-        String storedUsername = preferences.getString("username", "");
-
-        if(storedName != "" && storedUsername != ""){
-            logUserIn(storedName, storedUsername);
-        }
-
         // Set up the login form.
         mUsernameView = findViewById(R.id.username);
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -200,7 +176,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
-
         final String username = mUsernameView.getText().toString().toLowerCase();
         final String name = ((EditText) findViewById(R.id.nameTextView)).getText().toString();
 
@@ -285,10 +260,13 @@ public class LoginActivity extends AppCompatActivity {
     private void logUserIn(String name, String username){
         showProgress(true);
 
+        UserSession.clearUserSession();
+
         UserSession.setName(name);
         UserSession.setUsername(username);
 
         //save the user's login to shared preferences
+
         SharedPreferences preferences = LoginActivity.this.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("name", UserSession.getName());
@@ -298,22 +276,15 @@ public class LoginActivity extends AppCompatActivity {
         mFirebaseDatabase.getReference("users").child(username).child("friends").addListenerForSingleValueEvent(new FriendsListLoader());
     }
 
-    private void databaseQueriedCallback(){
-        if(friendsListLoaded) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-    }
-
     private class FriendsListLoader implements ValueEventListener {
 
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
 
             if(!dataSnapshot.exists()){
-                friendsListLoaded = true;
-                databaseQueriedCallback();
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
                 return;
             }
 
@@ -325,8 +296,9 @@ public class LoginActivity extends AppCompatActivity {
                 UserSession.addFriend(newFriend);
             }
 
-            friendsListLoaded = true;
-            databaseQueriedCallback();
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         @Override

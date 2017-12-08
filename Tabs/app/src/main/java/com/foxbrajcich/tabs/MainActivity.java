@@ -55,8 +55,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        dbHelper = LocalDatabaseHelper.getInstance(MainActivity.this);
 
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +78,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         groupList = new ArrayList<>();
+        findViewById(R.id.noFriendsText).setVisibility(View.GONE);
+        findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -90,7 +94,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ((TextView) headerView.findViewById(R.id.drawerUsernameTextView)).setText(UserSession.getUsername());
         navigationView.setNavigationItemSelectedListener(this);
 
-        refreshGroups();
+        if(UserSession.getGroupsList().size() < 1) {
+            refreshGroups();
+        }else{
+            //populate the list of groups from the databases
+            groupList.clear();
+            groupList.addAll(dbHelper.getAllOfflineGroups());
+            groupList.addAll(UserSession.getGroupsList());
+        }
 
         groupsAdapter = new ArrayAdapter<Group>(this, R.layout.group_list_layout, R.id.groupTextView, groupList) {
             @NonNull
@@ -128,6 +139,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        //if android destroyed the user session
+        if(UserSession.getUsername() == null){
+            Intent intent = new Intent(this, SplashScreen.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @Override
@@ -183,7 +206,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(data.hasExtra("group")) {
                 Group group = (Group) data.getSerializableExtra("group");
                 if(!group.isOnline()) dbHelper.addGroupToDatabase(group); //if it's an offline group add it to the local
-                else createGroupInFirebase(group);
+                else {
+                    createGroupInFirebase(group);
+                    Log.d("test", UserSession.getGroupsList().toString());
+                    UserSession.addGroup(group);
+                    Log.d("test", UserSession.getGroupsList().toString());
+                }
                 groupList.add(group);
                 groupsAdapter.notifyDataSetChanged();
 
@@ -206,6 +234,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(data.hasExtra("position")){
                     int position = data.getIntExtra("position", 0);
                     groupList.set(position, group);
+                    if(group.isOnline()) {
+                        Group toReplace = null;
+                        for (Group g : UserSession.getGroupsList()) {
+                            if(g.getGroupId().equals(group.getGroupId())){
+                                toReplace = g;
+                            }
+                        }
+                        UserSession.getGroupsList().remove(toReplace);
+                        UserSession.addGroup(group);
+                    }
+
                 }
             }
         }
@@ -264,14 +303,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void refreshGroups(){
-        swipeRefreshLayout.setRefreshing(true);
 
         UserSession.refreshGroups(new OnDataFetchCompleteListener() {
             @Override
             public void onDataFetchComplete() {
                 //populate the list of groups from the databases
                 groupList.clear();
-                dbHelper = LocalDatabaseHelper.getInstance(MainActivity.this);
                 groupList.addAll(dbHelper.getAllOfflineGroups());
                 groupList.addAll(UserSession.getGroupsList());
 

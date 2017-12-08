@@ -1,5 +1,7 @@
 package com.foxbrajcich.tabs;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +38,9 @@ public class UserSession {
         groupsList = new ArrayList<>();
     }
 
-    public static void setName(String name){UserSession.name = name;}
+    public static void setName(String name){
+        UserSession.name = name;
+    }
 
     public static String getName(){
         return name;
@@ -163,12 +167,6 @@ public class UserSession {
 
                 }
 
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
                 completeListener.onDataFetchComplete();
             }
 
@@ -177,9 +175,6 @@ public class UserSession {
 
             }
         });
-
-
-
 
     }
 
