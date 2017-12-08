@@ -36,6 +36,8 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
     static final String TO_USER = "toUser";
     static final String GROUP_ICON_ID = "groupIconId";
 
+
+    //make the database helper exist as one instance that can be accessed from multiple classes
     public static LocalDatabaseHelper getInstance(Context context){
         if(mInstance == null){
             mInstance = new LocalDatabaseHelper(context.getApplicationContext());
@@ -44,14 +46,16 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         return mInstance;
     }
 
+    //constructor
     private LocalDatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    //Create the tables used for our database
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        //create the table of groups
+        //create the table of groups containing their id, name, and icon id
         String createGroupTable =
                 "CREATE TABLE " + TABLE_GROUPS + "(" +
                         ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -60,7 +64,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(createGroupTable);
 
-        //create the table of user-group memberships
+        //create the table of user-group memberships containing the users name and the group id they are tied to
         String createGroupUserTable =
                 "CREATE TABLE " + TABLE_GROUP_USERS + "(" +
                         ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -69,7 +73,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(createGroupUserTable);
 
-        //create the table of expenses
+        //create the table of expenses including its name, the users name who created it, the groups id, and the amount
         String createExpenseTable =
                 "CREATE TABLE " + TABLE_EXPENSES + "(" +
                         ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -80,7 +84,7 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(createExpenseTable);
 
-        //create the table of Transactions
+        //create the table of Transactions which holds a name, to and from users names, amount, and the group id it is associated with
         String createTransactionTable =
                 "CREATE TABLE " + TABLE_TRANSACTIONS + "(" +
                         ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -96,9 +100,14 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        //do nothing for now
+        //do nothing
     }
 
+    /**
+     * Returns a list of group members (User objects) given a group id
+     * @param groupId the id of the group to get the members of
+     * @return a list of User objects representing the group's members
+     */
     public List<User> getGroupMembersById(int groupId){
         List<User> members = new ArrayList<>();
 
@@ -119,6 +128,11 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         return members;
     }
 
+    /**
+     * This function gets all the expenses associated with a group given the group's id
+     * @param groupId the id of the group whose expenses are to be returned
+     * @return a list of Expense objects for each expense in this group
+     */
     public List<Expense> getGroupExpensesById(int groupId){
         List<Expense> expenses = new ArrayList<>();
 
@@ -141,6 +155,10 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         return expenses;
     }
 
+    /**
+     * returns a list of all the offline groups stored in the local database
+     * @return a list of Group objects of all offline groups
+     */
     public List<Group> getAllOfflineGroups(){
         List<Group> groups = new ArrayList<>();
 
@@ -166,6 +184,11 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         return groups;
     }
 
+    /**
+     * inserts the given users into the local database and ties them to the group whose id is given
+     * @param members a list of users to add to the database and link to the group
+     * @param groupId the id of the group that these users should be linked to
+     */
     public void linkUsersToGroup(List<User> members, int groupId){
 
         if(members.size() < 1){
@@ -185,6 +208,11 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(linkUsersSql);
     }
 
+    /**
+     * inserts the given expenses into the local database and ties them to the group whose id is given
+     * @param expenses a list of expenses to add
+     * @param groupId the group id of the group that these expenses are a part of
+     */
     public void linkExpensesToGroup(List<Expense> expenses, int groupId){
 
         if(expenses.size() < 1){
@@ -209,6 +237,10 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * adds the given group to the database
+     * @param group the group to add
+     */
     public void addGroupToDatabase(Group group){
 
         String addGroupSql = "INSERT INTO " + TABLE_GROUPS + " VALUES(null, '" + group.getGroupTitle() + "', " + group.getGroupIconId() + ")";
@@ -231,6 +263,11 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * adds the given expense to the group given
+     * @param group the group to add the expense to
+     * @param expense the expense to add to the group
+     */
     public void addExpenseToGroup(Group group, Expense expense){
 
         String addExpenseSql = "INSERT INTO " + TABLE_EXPENSES +
@@ -242,12 +279,22 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * adds the given transaction to the group given
+     * @param group the group to add the transaction to
+     * @param transaction the transaction to add to the group
+     */
     public void addTransactionToGroup(Group group, Transaction transaction){
         List<Transaction> toAdd = new ArrayList<>();
         toAdd.add(transaction);
         linkTransactionsToGroup(toAdd, Integer.parseInt(group.getGroupId()));
     }
 
+    /**
+     * adds the given transactions to the group whose group id is given
+     * @param transactions the list of transactions to be added to the database
+     * @param groupId the id of the group that these transactions should be tied to
+     */
     public void linkTransactionsToGroup(List<Transaction> transactions, int groupId){
         if(transactions.size() < 1){
             return;
@@ -270,6 +317,11 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(linkTransactionsSql);
     }
 
+    /**
+     * returns the transactions for a group with the given group id
+     * @param groupId the id of the group to get the transactions for
+     * @return the list of transactions that are part of this group
+     */
     public List<Transaction> getGroupTransactionsById(int groupId){
         List<Transaction> transactions = new ArrayList<>();
 
