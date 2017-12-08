@@ -35,7 +35,6 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
     private User offlineUserEntry;
     private TextView addedUsersView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +51,6 @@ public class AddFriendsToGroupActivity extends AppCompatActivity {
 
 
         group = (Group) getIntent().getSerializableExtra(getString(R.string.group));
-
         ListView listView = (ListView) findViewById(R.id.friendsList);
         addedUsersView = findViewById(R.id.groupMembers);
 

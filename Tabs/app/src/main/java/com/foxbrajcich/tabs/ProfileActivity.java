@@ -27,16 +27,27 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        // create the scrollview and set its position to the top
         ScrollView scrollView = (ScrollView) findViewById(R.id.profileScrollView);
         scrollView.setSmoothScrollingEnabled(true);
         scrollView.smoothScrollTo(0, 0);
 
+        // initialize the text views
         TextView textView = (TextView) findViewById(R.id.textView);
         textView.setText(UserSession.getName());
         TextView textView2 = (TextView) findViewById(R.id.textView4);
         textView2.setText(UserSession.getUsername());
 
+        // a button to edit the user's profile
         TextView editProfileButton = (TextView) findViewById(R.id.editProfileButton);
+        editProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ProfileActivity.this, R.string.notImplementedYet, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // an array adapter for the list of transactions
         final List<Transaction> transactions = getTransactions();
         ListView activityList = (ListView) findViewById(R.id.activityList);
         adapter = new ArrayAdapter<Transaction>(this, R.layout.expense_list_layout, R.id.nameTextView, transactions){
@@ -45,19 +56,23 @@ public class ProfileActivity extends AppCompatActivity {
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
 
+                // get views in list layout
                 ImageView imageView = (ImageView) view.findViewById(R.id.groupImageView);
                 TextView textView = (TextView) view.findViewById(R.id.nameTextView);
                 TextView textView2 = (TextView) view.findViewById(R.id.amountTextView);
                 TextView textView3 = (TextView) view.findViewById(R.id.contentTextView);
                 imageView.setImageResource(R.drawable.user);
+                // set views in list layout
                 if(transactions.get(position).getReceivingUsersName().equals(UserSession.getName())){
-                    textView.setText(transactions.get(position).getSendingUsersName() + " paid you");
-                    textView2.setText("$"+String.format("%.02f",transactions.get(position).getAmount()));
+                    // if you were paid
+                    textView.setText(transactions.get(position).getSendingUsersName() + getString(R.string.paidYou));
+                    textView2.setText(R.string.$+String.format("%.02f",transactions.get(position).getAmount()));
                     textView2.setTextColor(Color.rgb(0, 100, 0));
                     textView3.setText(getTransactions().get(position).getGroupName());
                 } else if(transactions.get(position).getSendingUsersName().equals(UserSession.getName())){
-                    textView.setText("You paid " + transactions.get(position).getReceivingUsersName());
-                    textView2.setText("$"+String.format("%.02f",transactions.get(position).getAmount()));
+                    // if you paid someone
+                    textView.setText(getString(R.string.youPaid) + transactions.get(position).getReceivingUsersName());
+                    textView2.setText(R.string.$+String.format("%.02f",transactions.get(position).getAmount()));
                     textView2.setTextColor(Color.RED);
                     textView3.setText(getTransactions().get(position).getGroupName());
                 }
@@ -67,22 +82,20 @@ public class ProfileActivity extends AppCompatActivity {
         activityList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        editProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(ProfileActivity.this, "Not implemented yet", Toast.LENGTH_SHORT).show();
-            }
-        });
         getListHeight(activityList);
     }
 
+    /**
+     * sets the height of the listview to the expanded list height
+     * @param listView the listview
+     */
     public static void getListHeight (ListView listView) {
 
         ListAdapter adapter = listView.getAdapter();
-
         if (adapter == null) {
             return;
         }
+        // add the height of each individual list item
         ViewGroup viewGroup = listView;
         int totalHeight = 0;
         for (int i = 0; i < adapter.getCount(); i++) {
@@ -90,7 +103,7 @@ public class ProfileActivity extends AppCompatActivity {
             listItem.measure(0, 0);
             totalHeight += listItem.getMeasuredHeight();
         }
-
+        // set the height of the whole list
         ViewGroup.LayoutParams par = listView.getLayoutParams();
         par.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
         listView.setLayoutParams(par);
@@ -100,6 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home){
+            // override transition
             finishAfterTransition();
             overridePendingTransition(R.anim.fade_in, R.anim.slide_in_right);
         }
@@ -108,15 +122,22 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        //override transition
         overridePendingTransition(R.anim.fade_in, R.anim.slide_in_right);
         super.onBackPressed();
     }
 
+    /**
+     * gets a list of all transactions involving the user
+     * @return the list
+     */
     public List<Transaction> getTransactions(){
         List<Transaction> transactions = new ArrayList<>();
         Log.d("test", UserSession.getGroupsList().toString());
+        // sort through the groups
         for(int i = 0; i < UserSession.getGroupsList().size(); i++){
             Group group = UserSession.getGroupsList().get(i);
+            //sort though the transactions
             for(int j = 0; j < group.getTransactions().size(); j++){
                 if(group.getTransactions().get(j).getReceivingUsersName().equals(UserSession.getName())){
                     group.getTransactions().get(j).setGroupName(group.getGroupTitle());

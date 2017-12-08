@@ -37,10 +37,10 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
-    LocalDatabaseHelper dbHelper;
-    List<Group> groupList;
-    ArrayAdapter<Group> groupsAdapter;
-    SwipeRefreshLayout swipeRefreshLayout;
+    private LocalDatabaseHelper dbHelper;
+    private List<Group> groupList;
+    private ArrayAdapter<Group> groupsAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     final static int NEW_REQUEST_CODE = 1;
     final static int EXISTING_GROUP_REQUEST_CODE = 2;
@@ -54,18 +54,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         dbHelper = LocalDatabaseHelper.getInstance(MainActivity.this);
 
+        // hide the keyboard if it is displayed
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        // create a new group when floating action button is clicked
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, CreateGroupActivity.class);
                 startActivityForResult(intent, NEW_REQUEST_CODE);
+                // override the transition
                 overridePendingTransition(R.anim.slide_up_bottom, R.anim.fade_out);
             }
         });
 
+        // swipe to refresh groups
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.main_refresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
             @Override
@@ -75,10 +79,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         groupList = new ArrayList<>();
+        // hide the empty list views
         findViewById(R.id.noFriendsText).setVisibility(View.GONE);
         findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
 
-
+        // add drawer to action bar
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -91,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ((TextView) headerView.findViewById(R.id.drawerUsernameTextView)).setText(UserSession.getUsername());
         navigationView.setNavigationItemSelectedListener(this);
 
+        // add empty list views to activity
         if(UserSession.getGroupsList().size() < 1) {
             refreshGroups();
         }else{
@@ -105,19 +111,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-
+                // get the views in the list layout
                 ImageView imageView = (ImageView) view.findViewById(R.id.groupImageView);
                 TextView textView = (TextView) view.findViewById(R.id.groupTextView);
                 TextView textView1 = (TextView) view.findViewById(R.id.groupTextView2);
+
+                // set the views
                 textView.setText(groupList.get(position).getGroupTitle());
-                textView1.setText(groupsAdapter.getItem(position).isOnline() ? "Online Group" : "Offline Group");
+                textView1.setText(groupsAdapter.getItem(position).isOnline() ? getString(R.string.onlineGroup) : getString(R.string.offlineGroup));
                 imageView.setImageResource(getImage(groupList.get(position).getGroupIconId()));
                 return view;
             }
         };
-
+        // go to the group when clicked
         ListView listView =  (ListView) findViewById(R.id.groupList);
-
         listView.setAdapter(groupsAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -129,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        // show option to delete group on long click
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -142,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onResume(){
         super.onResume();
-
         //if android destroyed the user session
         if(UserSession.getUsername() == null){
             Intent intent = new Intent(this, SplashScreen.class);
@@ -153,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
+        // close drawer if open
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -168,30 +176,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.profile) {
-            // Handle the camera action
+            // go to the profile screen
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+
+            // override the transition
             startActivityForResult(intent, NEW_REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out);
         } else if (id == R.id.findFriends) {
+            // go to find friends screen
             Intent intent = new Intent(MainActivity.this, FindFriendsActivity.class);
+
+            // override transition
             startActivityForResult(intent, NEW_REQUEST_CODE);
             overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out);
         } else if (id == R.id.settings) {
-            Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.notImplementedYet, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.help) {
-            Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.notImplementedYet, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.signOut) {
+            // remove info from shared preferences
             SharedPreferences preferences = this.getSharedPreferences(LoginActivity.PREFERENCES_FILE, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("name", "");
-            editor.putString("username", "");
+            editor.putString("name", getString(R.string.empty));
+            editor.putString("username", getString(R.string.empty));
             editor.commit();
 
+            // go back to sign in screen
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
-
+        // close drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -210,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     UserSession.addGroup(group);
                     Log.d("test", UserSession.getGroupsList().toString());
                 }
-                groupList.add(group);
+                groupList.add(0, group);
                 groupsAdapter.notifyDataSetChanged();
 
                 //hide the sad face if it's showing
@@ -222,6 +237,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 intent.putExtra("group", group);
                 intent.putExtra("position", groupList.size() - 1);
                 startActivityForResult(intent, EXISTING_GROUP_REQUEST_CODE);
+
+                // override the transition
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         }
@@ -231,7 +248,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Group group = (Group) data.getSerializableExtra("group");
                 if(data.hasExtra("position")){
                     int position = data.getIntExtra("position", 0);
-                    groupList.set(position, group);
+                    // move the group to the top of the list
+                    groupList.remove(position);
+                    groupList.add(0, group);
+                    groupsAdapter.notifyDataSetChanged();
+
                     if(group.isOnline()) {
                         Group toReplace = null;
                         for (Group g : UserSession.getGroupsList()) {
@@ -242,12 +263,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         UserSession.getGroupsList().remove(toReplace);
                         UserSession.addGroup(group);
                     }
-
                 }
             }
         }
     }
 
+    /**
+     * gets the drawable integer corresponding to an image index
+     * @param i the image index
+     * @return the integer representing the image
+     */
     public int getImage(int i) {
         if (i == 1) {
             return R.drawable.basketball;
@@ -274,6 +299,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     *
+     * @param group
+     */
     private void createGroupInFirebase(Group group){
         DatabaseReference dbGroups = FirebaseDatabase.getInstance().getReference("groups");
         DatabaseReference groupRef = dbGroups.push();
@@ -300,6 +329,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    /**
+     * refreshes the groups
+     */
     private void refreshGroups(){
 
         UserSession.refreshGroups(new OnDataFetchCompleteListener() {
@@ -310,9 +342,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 groupList.addAll(dbHelper.getAllOfflineGroups());
                 groupList.addAll(UserSession.getGroupsList());
 
+                // display or disable empty list views
                 if(groupList.size() == 0){
                     TextView groupEmptyText = (TextView) findViewById(R.id.noFriendsText);
-                    groupEmptyText.setText("No Groups Created");
+                    groupEmptyText.setText(R.string.noGroupsCreated);
                     findViewById(R.id.noFriendsText).setVisibility(View.VISIBLE);
                     findViewById(R.id.noFriendsSadFace).setVisibility(View.VISIBLE);
                 } else {
@@ -320,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     findViewById(R.id.noFriendsSadFace).setVisibility(View.GONE);
                     groupsAdapter.notifyDataSetChanged();
                 }
-
                 swipeRefreshLayout.setRefreshing(false);
             }
         });

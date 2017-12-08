@@ -117,4 +117,16 @@
     <string name="onlineGroup">Online Group</string>
     <string name="offlineGroup">Offline Group</string>
     <string name="pleaseEnterATitle">Please Enter a Title</string>
+    <string name="no">No</string>
+    <string name="users">users</string>
+    <string name="friends">friends</string>
+    <string name="toYourFriendsList">) to your friends list?</string>
+    <string name="wouldYouLikeToAdd">Would you like to add\u0020</string>
+    <string name="yes">Yes</string>
+    <string name="addFriend">Add Friend</string>
+    <string name="$">$</string>
+    <string name="notImplementedYet">Not implemented yet</string>
+    <string name="noGroupsCreated">No Groups Created</string>
+    <string name="youPaid">You paid\u0020</string>
+    <string name="paidYou">\u0020paid you</string>
 </resources>
