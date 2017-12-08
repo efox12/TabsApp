@@ -1,6 +1,7 @@
 package com.foxbrajcich.tabs;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by erikfox on 11/24/17.
@@ -15,13 +16,17 @@ public class Transaction implements Serializable{
     private String sendingUsersName;
     private String receivingUsersName;
     private String groupName;
-
+    private Date dateAdded;
     public Transaction(){
         sendingUsername = "";
         receivingUsername = "";
         sendingUsersName = "";
         receivingUsersName = "";
     }
+
+    public void setDateAdded(Date dateAdded) { this.dateAdded = dateAdded; }
+
+    public Date getDateAdded() { return dateAdded; }
 
     public String getName() {
         return name;

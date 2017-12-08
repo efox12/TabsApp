@@ -1,6 +1,7 @@
 package com.foxbrajcich.tabs;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by erikfox on 11/15/17.
@@ -13,6 +14,7 @@ public class Expense implements Serializable{
     private int expenseId;
     private double amount;
     private int userId;
+    private Date dateAdded;
 
     public Expense(){
         this.username = "";
@@ -24,6 +26,10 @@ public class Expense implements Serializable{
         this.username = "";
         this.amount = amount;
     }
+
+    public void setDateAdded(Date dateAdded) { this.dateAdded = dateAdded; }
+
+    public Date getDateAdded() { return dateAdded; }
 
     public void setAmount(double amount) {
         this.amount = amount;

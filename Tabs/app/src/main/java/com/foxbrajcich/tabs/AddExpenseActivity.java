@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class AddExpenseActivity extends AppCompatActivity {
@@ -27,11 +29,20 @@ public class AddExpenseActivity extends AppCompatActivity {
     ArrayAdapter<User> adapter;
     EditText expenseAmount;
     EditText expenseDescription;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.group_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+            @Override
+            public void onRefresh() {
+
+            }
+        });
         spinner = (Spinner) findViewById(R.id.spinner);
         final Group group = (Group) getIntent().getSerializableExtra("group");
 
@@ -151,7 +162,8 @@ public class AddExpenseActivity extends AppCompatActivity {
                 expense.setUsername(users.get(spinner.getSelectedItemPosition()).getUsername());
                 expense.setAmount(Double.valueOf(expenseAmount.getText().toString()));
                 expense.setContent(expenseDescription.getText().toString());
-
+                expense.setDateAdded(Calendar.getInstance().getTime());
+                System.out.println("IOIOIOIOIOIOIOIOIOIO"+expense.getDateAdded().toString());
                 Intent intent = getIntent();
                 intent.putExtra("expense", expense);
                 setResult(RESULT_OK, intent);
@@ -160,6 +172,7 @@ public class AddExpenseActivity extends AppCompatActivity {
                 return true;
             }
         }
+
         if(item.getItemId() == android.R.id.home){
             InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(expenseAmount.getWindowToken(), 0);

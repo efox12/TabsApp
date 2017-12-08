@@ -1,6 +1,5 @@
 package com.foxbrajcich.tabs;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,7 +16,6 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,9 +40,6 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.Legend.LegendPosition;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -66,7 +62,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     List<User> displayMembers = new ArrayList<>();
     Group group;
     PieChart pieChart;
-
+    SwipeRefreshLayout swipeRefreshLayout;
     public static final int[] COLORS = {
             rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c"), rgb("#3498db"), Color.rgb(193, 37, 82),
             Color.rgb(255, 102, 0), Color.rgb(245, 199, 0), Color.rgb(106, 150, 31),
@@ -82,6 +78,15 @@ public class GroupInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_info);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.group_info_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+            @Override
+            public void onRefresh() {
+
+            }
+        });
+
         group = (Group) getIntent().getSerializableExtra("group");
 
         groupMembers = group.getMembers();

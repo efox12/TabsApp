@@ -6,10 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.foxbrajcich.tabs.GroupActivity">
-
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/group_refresh">
     <ListView
         android:id="@+id/expenseList"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

@@ -9,48 +9,53 @@
     android:orientation="vertical"
     tools:context="com.foxbrajcich.tabs.GroupInfoActivity">
 
-    <ScrollView
-        android:id="@+id/groupInfoScrollView"
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:id="@+id/group_info_refresh">
+        <ScrollView
+            android:id="@+id/groupInfoScrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <Spinner
-                android:id="@+id/groupMembersSpinner"
-                android:layout_margin="10dp"
-                android:layout_gravity="right"
+            android:layout_height="match_parent">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </Spinner>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <Spinner
+                    android:id="@+id/groupMembersSpinner"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </Spinner>
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pieChart"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:layout_gravity="center" />
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center" />
 
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:paddingLeft="15dp"
-                android:paddingBottom="5dp"
-                android:text="" />
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingLeft="15dp"
+                    android:paddingBottom="5dp"
+                    android:text="" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"/>
 
-            <ListView
-                android:id="@+id/friendsList"
-                android:paddingLeft="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="200dp" />
-        </LinearLayout>
-    </ScrollView>
+                <ListView
+                    android:id="@+id/friendsList"
+                    android:paddingLeft="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" />
+            </LinearLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
