@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,8 +16,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.animation.Easing;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -34,6 +37,7 @@ public class GroupActivity extends AppCompatActivity {
     private List<Expense> expenses = new ArrayList<>();
     private ArrayAdapter<Expense> adapter;
     private LocalDatabaseHelper dbHelper;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,30 @@ public class GroupActivity extends AppCompatActivity {
 
         //get instance of the offline group database
         dbHelper = LocalDatabaseHelper.getInstance(this);
+
+        swipeRefreshLayout = findViewById(R.id.group_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(group.isOnline()){
+                    UserSession.refreshAndGetGroup(group.getGroupId(), new OnDataFetchCompleteListener() {
+                        @Override
+                        public void onDataFetchComplete(Object data) {
+                            Group g = (Group) data;
+
+                            group.setTransactions(g.getTransactions());
+                            group.getExpenses().clear();
+                            group.getExpenses().addAll(g.getExpenses());
+                            adapter.notifyDataSetChanged();
+
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
+                }else{
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
 
         ActionBar actionBar = getSupportActionBar();
         // add an expense when fab is clicked
@@ -159,6 +187,8 @@ public class GroupActivity extends AppCompatActivity {
                 Group updatedGroup = (Group) data.getSerializableExtra("group");
                 // add the transactions to the group
                 group.setTransactions(updatedGroup.getTransactions());
+                group.getExpenses().clear();
+                group.getExpenses().addAll(updatedGroup.getExpenses());
                 adapter.notifyDataSetChanged();
             }
         }
