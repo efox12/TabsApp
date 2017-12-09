@@ -1,3 +1,8 @@
+/* Sources
+/* All icons can be credited to
+/* Freepik and Smashicons from www.flaticon.com
+*/
+
 package com.foxbrajcich.tabs;
 import android.app.Activity;
 import android.content.Context;

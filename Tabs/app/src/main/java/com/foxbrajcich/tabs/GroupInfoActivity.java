@@ -1,3 +1,8 @@
+/* Sources
+/* https://github.com/PhilJay/MPAndroidChart
+/* used this api for pie chart
+*/
+
 package com.foxbrajcich.tabs;
 
 import android.app.Activity;
