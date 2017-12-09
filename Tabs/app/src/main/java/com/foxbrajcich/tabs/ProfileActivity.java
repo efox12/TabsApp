@@ -66,13 +66,13 @@ public class ProfileActivity extends AppCompatActivity {
                 if(transactions.get(position).getReceivingUsersName().equals(UserSession.getName())){
                     // if you were paid
                     textView.setText(transactions.get(position).getSendingUsersName() + getString(R.string.paidYou));
-                    textView2.setText(R.string.$+String.format("%.02f",transactions.get(position).getAmount()));
+                    textView2.setText(getString(R.string.$) + String.format("%.02f",transactions.get(position).getAmount()));
                     textView2.setTextColor(Color.rgb(0, 100, 0));
                     textView3.setText(getTransactions().get(position).getGroupName());
                 } else if(transactions.get(position).getSendingUsersName().equals(UserSession.getName())){
                     // if you paid someone
                     textView.setText(getString(R.string.youPaid) + transactions.get(position).getReceivingUsersName());
-                    textView2.setText(R.string.$+String.format("%.02f",transactions.get(position).getAmount()));
+                    textView2.setText(getString(R.string.$)+String.format("%.02f",transactions.get(position).getAmount()));
                     textView2.setTextColor(Color.RED);
                     textView3.setText(getTransactions().get(position).getGroupName());
                 }
@@ -133,7 +133,6 @@ public class ProfileActivity extends AppCompatActivity {
      */
     public List<Transaction> getTransactions(){
         List<Transaction> transactions = new ArrayList<>();
-        Log.d("test", UserSession.getGroupsList().toString());
         // sort through the groups
         for(int i = 0; i < UserSession.getGroupsList().size(); i++){
             Group group = UserSession.getGroupsList().get(i);

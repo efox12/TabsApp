@@ -3,6 +3,7 @@ package com.foxbrajcich.tabs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FindFriendsActivity extends AppCompatActivity {
-
+    final int REQUEST_CODE = 1;
     private EditText mSearchView;
     private ListView mListView;
     private ArrayAdapter<User> arrayAdapter;
@@ -95,8 +96,10 @@ public class FindFriendsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final User user = (User) adapterView.getItemAtPosition(i);
-
-                if(!isFriend(user)) {
+                Intent intent = new Intent(FindFriendsActivity.this, FriendsActivity.class);
+                intent.putExtra("user", user);
+                startActivityForResult(intent, REQUEST_CODE);
+                /*if(!isFriend(user)) {
                     new AlertDialog.Builder(FindFriendsActivity.this).setTitle(R.string.addFriend)
                             .setMessage(getString(R.string.wouldYouLikeToAdd) + user.getName() + getString(R.string.lparen) + user.getUsername() + getString(R.string.toYourFriendsList))
                             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -111,7 +114,7 @@ public class FindFriendsActivity extends AppCompatActivity {
                             })
                             .setNegativeButton(R.string.no, null)
                             .show();
-                }
+                }*/
             }
         });
 
@@ -221,6 +224,19 @@ public class FindFriendsActivity extends AppCompatActivity {
         @Override
         public void onCancelled(DatabaseError databaseError) {
             //do nothing
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == Activity.RESULT_OK){
+            User user = (User) getIntent().getSerializableExtra("user");
+            UserSession.addFriend(new User(user.getName(), user.getUsername()));
+            filteredUsers.remove(user);
+            mFirebaseDatabase.getReference(getString(R.string.users)).child(UserSession.getUsername()).child(getString(R.string.friends)).push().setValue(user.getUsername());
+            mSearchView.setText(getString(R.string.empty));
+            arrayAdapter.notifyDataSetChanged();
         }
     }
 

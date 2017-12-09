@@ -129,4 +129,5 @@
     <string name="noGroupsCreated">No Groups Created</string>
     <string name="youPaid">You paid\u0020</string>
     <string name="paidYou">\u0020paid you</string>
+    <string name="userInfo">User Info</string>
 </resources>

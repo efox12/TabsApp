@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     UserSession.addGroup(group);
                     Log.d("test", UserSession.getGroupsList().toString());
                 }
-                groupList.add(0, group);
+                //groupList.add(0, group);
                 groupsAdapter.notifyDataSetChanged();
 
                 //hide the sad face if it's showing
