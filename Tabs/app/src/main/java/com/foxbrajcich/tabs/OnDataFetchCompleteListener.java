@@ -6,5 +6,5 @@ package com.foxbrajcich.tabs;
 
 public interface OnDataFetchCompleteListener {
 
-    void onDataFetchComplete();
+    void onDataFetchComplete(Object data);
 }

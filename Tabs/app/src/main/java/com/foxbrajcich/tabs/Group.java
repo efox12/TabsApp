@@ -1,6 +1,8 @@
 package com.foxbrajcich.tabs;
 
 
+import android.support.v4.widget.SwipeRefreshLayout;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ public class Group implements Serializable{
     List<Expense> expenses = new ArrayList<>();
     private List<Transaction> transactions = new ArrayList<>();
     private boolean isOnline;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public Group(){}
 

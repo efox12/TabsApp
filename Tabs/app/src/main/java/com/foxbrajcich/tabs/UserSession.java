@@ -163,7 +163,7 @@ public class UserSession {
 
                 }
 
-                completeListener.onDataFetchComplete();
+                completeListener.onDataFetchComplete(null);
             }
 
             @Override
@@ -172,6 +172,103 @@ public class UserSession {
             }
         });
 
+    }
+
+    public static void refreshAndGetGroup(final String groupId, final OnDataFetchCompleteListener listener){
+        FirebaseDatabase.getInstance().getReference("groups").child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> groupInfo = (Map<String, Object>) dataSnapshot.getValue();
+                String groupName = (String) groupInfo.get("name");
+
+                int groupIconId = 0;
+                if(groupInfo.containsKey("groupIcon")){
+                    groupIconId = ((java.lang.Number) groupInfo.get("groupIcon")).intValue();
+                }
+
+                Map<String, Object> expenses = (Map<String, Object>) groupInfo.get("expenses");
+                Map<String, Object> members = (Map<String, Object>) groupInfo.get("members");
+                Map<String, Object> transactions = (Map<String, Object>) groupInfo.get("transactions");
+
+                List<Expense> expenseList = new ArrayList<>();
+                List<User> memberList = new ArrayList<>();
+                List<Transaction> transactionList = new ArrayList<>();
+
+                if(expenses != null && expenses.size() > 0) {
+                    for (String expenseId : expenses.keySet()) {
+                        Map<String, Object> expense = (Map<String, Object>) expenses.get(expenseId);
+
+                        String content = (String) expense.get("content");
+                        String username = (String) expense.get("username");
+                        String usersName = (String) expense.get("usersName");
+                        double amount = ((java.lang.Number) expense.get("amount")).doubleValue();
+
+                        Expense newExpense = new Expense(content, usersName, amount);
+                        newExpense.setUsername(username);
+
+                        expenseList.add(newExpense);
+                    }
+                }
+
+
+                if(members != null && members.size() > 0) {
+                    for (String memberId : members.keySet()) {
+                        Map<String, Object> member = (Map<String, Object>) members.get(memberId);
+
+                        String username = (String) member.get("username");
+                        String name = (String) member.get("name");
+
+                        User newUser = new User(name, username);
+                        if(username.length() > 0) {
+                            UserDataFetcher.registerUserToPopulate(newUser);
+                        }
+                        memberList.add(newUser);
+                    }
+                }
+
+                if(transactions != null && transactions.size() > 0) {
+                    for (String transactionId : transactions.keySet()) {
+
+                        Map<String, Object> transaction = (Map<String, Object>) transactions.get(transactionId);
+
+                        String content = (String) transaction.get("content");
+                        String sendingUser = (String) transaction.get("sendingUser");
+                        String receivingUser = (String) transaction.get("receivingUser");
+                        String sendingUsersName = (String) transaction.get("sendingUsersName");
+                        String receivingUsersName = (String) transaction.get("receivingUsersName");
+                        double amount = ((java.lang.Number) transaction.get("amount")).doubleValue();
+
+                        Transaction newTransaction = new Transaction();
+                        newTransaction.setName(content);
+                        newTransaction.setReceivingUsername(receivingUser);
+                        newTransaction.setSendingUsername(sendingUser);
+                        newTransaction.setReceivingUsersName(receivingUsersName);
+                        newTransaction.setSendingUsersName(sendingUsersName);
+                        newTransaction.setAmount(amount);
+
+                        transactionList.add(newTransaction);
+                    }
+                }
+
+                Group groupToAdd = new Group(groupName, groupId, memberList, expenseList, transactionList, true);
+                groupToAdd.setGroupIconId(groupIconId);
+
+                Group groupToRemove = null;
+                for(Group g : groupsList){
+                    if(g.getGroupId().equals(groupId)){
+                        groupToRemove = g;
+                    }
+                }
+                groupsList.remove(groupToRemove);
+                groupsList.add(groupToAdd);
+                listener.onDataFetchComplete(groupToAdd);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //do nothing
+            }
+        });
     }
 
 }

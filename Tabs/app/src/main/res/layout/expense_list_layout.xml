@@ -6,10 +6,12 @@
 
     <ImageView
         android:id="@+id/groupImageView"
-        android:padding="10dp"
-        android:layout_gravity="center"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:padding="10dp"
         android:scaleType="fitCenter"
         android:src="@android:drawable/alert_dark_frame" />
     <LinearLayout
@@ -40,7 +42,7 @@
                 android:paddingLeft="10dp"
                 android:textSize="15sp"
                 android:text="TextView" />
-            </LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/contentTextView"

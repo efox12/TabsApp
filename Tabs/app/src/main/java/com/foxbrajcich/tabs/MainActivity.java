@@ -226,11 +226,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(!group.isOnline()) dbHelper.addGroupToDatabase(group); //if it's an offline group add it to the local
                 else {
                     createGroupInFirebase(group);
-                    Log.d("test", UserSession.getGroupsList().toString());
                     UserSession.addGroup(group);
-                    Log.d("test", UserSession.getGroupsList().toString());
                 }
-                //groupList.add(0, group);
+
+                groupList.add(0, group);
                 groupsAdapter.notifyDataSetChanged();
 
                 //hide the sad face if it's showing
@@ -240,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //open newly added group in GroupActivity
                 Intent intent = new Intent(this, GroupActivity.class);
                 intent.putExtra("group", group);
-                intent.putExtra("position", groupList.size() - 1);
+                intent.putExtra("position", 0);
                 startActivityForResult(intent, EXISTING_GROUP_REQUEST_CODE);
 
                 // override the transition
@@ -341,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         UserSession.refreshGroups(new OnDataFetchCompleteListener() {
             @Override
-            public void onDataFetchComplete() {
+            public void onDataFetchComplete(Object data) {
                 //populate the list of groups from the databases
                 groupList.clear();
                 groupList.addAll(dbHelper.getAllOfflineGroups());

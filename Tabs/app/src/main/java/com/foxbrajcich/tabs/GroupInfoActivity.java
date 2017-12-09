@@ -68,6 +68,7 @@ public class GroupInfoActivity extends AppCompatActivity {
     Group group;
     PieChart pieChart;
     SwipeRefreshLayout swipeRefreshLayout;
+
     public static final int[] COLORS = {
             rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c"), rgb("#3498db"), Color.rgb(193, 37, 82),
             Color.rgb(255, 102, 0), Color.rgb(245, 199, 0), Color.rgb(106, 150, 31),
@@ -88,7 +89,32 @@ public class GroupInfoActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
             @Override
             public void onRefresh() {
+                if(group.isOnline()) {
+                    UserSession.refreshAndGetGroup(group.getGroupId(), new OnDataFetchCompleteListener() {
+                        @Override
+                        public void onDataFetchComplete(Object data) {
+                            Group g = (Group) data;
+                            boolean dataChanged = (g.getExpenses().size() != group.getExpenses().size()) ||
+                                    (g.getTransactions().size() != group.getTransactions().size());
 
+                            group.setExpenses(g.getExpenses());
+                            group.setTransactions(g.getTransactions());
+
+                            debts.clear();
+                            debts.addAll(group.getDebtsForUser((User) ((Spinner) findViewById(R.id.groupMembersSpinner)).getSelectedItem()));
+                            updateListView();
+
+                            if(dataChanged) {
+                                createSegments();
+                                pieChart.animateY(1200, Easing.EasingOption.EaseInOutQuad);
+                            }
+
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
+                }else{
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
 
